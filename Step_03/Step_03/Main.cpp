@@ -2,7 +2,7 @@
 
 int main(void)
 {
-	/*
+	
 	//변수 선언
 	int na, nb;		
 
@@ -47,7 +47,7 @@ int main(void)
 	printf_s("%c\n", 38);	
 	printf_s("%x\n", 'A');		//41
 	printf_s("%c\n\n", 'A');	//A
-	*/
+	
 
 	int nNum;		//값을 저장 받을 int 형
 	float fNum;		//값을 저장 받을 float 형
