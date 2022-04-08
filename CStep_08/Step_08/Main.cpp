@@ -55,7 +55,7 @@ int main(void)
 	int* piNumber;
 	piNumber = &iNumber;
 
-	int* pPointer = ;
+	
 
 	printf_s("iNumber	: %d\n", iNumber);
 	printf_s("*piNumber	: %d\n", *piNumber);
