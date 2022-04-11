@@ -89,6 +89,7 @@ int main(void)
 	char AName[20] = "";
 	char BName[20] = "";
 	char CName[20] = "";
+
 	printf_s("세 명의 학생의 정보를 입력하십시오.\n");
 	
 	INFO Student[3];
