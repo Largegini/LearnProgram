@@ -48,6 +48,7 @@ typedef struct tagObject
 	INFO Info;
 }Object;
 
+// 객체를 배열로 관리하기위한 전역변수
 Object* Objects[MAX];
 
 // 함수 전방 선언
@@ -71,10 +72,9 @@ int main(void)
 	return 0;
 }
 
+//객체 정보 초기화 함수
 void InitializeObject(Object* _obj, int ObjectType)
 {
-	
-	
 
 	switch (ObjectType)
 	{
@@ -89,6 +89,7 @@ void InitializeObject(Object* _obj, int ObjectType)
 			_obj->Info.Level = 1;
 			_obj->Info.EXP = 0;
 			break;
+
 		case ENEMY :
 			_obj->Info.Name = (char*)"Enemy";	//ENEMY의 객체정보를 초기화한다.
 
@@ -104,6 +105,7 @@ void InitializeObject(Object* _obj, int ObjectType)
 	}
 }
 
+//플레이어 이름을 설정하는 함수
 char* SetName()
 {
 	char Buffer[128] = "";								//문자열을 입력받기위한 임의의 공간 선언
@@ -375,7 +377,7 @@ void StageScene()
 					}
 					break;
 
-				// 
+				// 잘못된 입력시 턴 소모 하게 만들기 위함
 				default:
 					printf_s("잘못된 입력입니다! 몬스터의공격!!\n");
 
