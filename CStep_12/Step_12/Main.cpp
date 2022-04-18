@@ -54,14 +54,18 @@ Object* Objects[MAX];
 // 함수 전방 선언
 void InitializeObject(Object* _obj, int ObjectType);	// 객체정보를 초기화하기위한 함수
 char* SetName();
-void Status();
+
 void SceneManager(int SceneState);
 void LogoScene();
 void MenuScene();
 void StageScene();
+void Status();
+void PlayerAttack();
+void EnemyAttack();
 
 int main(void)
 {
+	
 	SceneState = 0;
 	while (Loop)
 	{
@@ -182,37 +186,13 @@ void StageScene()
 	InitializeObject(Objects[PLAYER], PLAYER);			//초기화
 	Objects[ENEMY] = (Object*)malloc(sizeof(Object));	//ENEMY 동적할당
 	InitializeObject(Objects[ENEMY], ENEMY);			//초기화
-
-
-
-
 	
 	//무한반복하기위함
 	while (true)										
 	{
 		// 전투 반복을 위한 함수
 		short Battle = 1;								
-
-		// 반복 시 화면을 지우기위한 함수
-		system("cls");									
-
-		//플레이어의 정보를 출력
-		printf_s("[Player] : %s\n", Objects[PLAYER]->Info.Name);
-		printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
-		printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
-		printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
-		printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
-		printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
-		printf_s("경험치 : %d\n", Objects[PLAYER]->Info.EXP);
-
-		//몬스터의 정보를 출력
-		printf_s("\n%s\n", Objects[ENEMY]->Info.Name);
-		printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
-		printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
-		printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
-		printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
-		printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
-		printf_s("경험치 : %d\n", Objects[ENEMY]->Info.EXP);
+		Status();
 
 		//전투
 		while (Battle)
@@ -228,62 +208,22 @@ void StageScene()
 			{
 				//공격을 선택했을 때
 				case 1:
-					printf_s("%s의 공격!!\n", Objects[PLAYER]->Info.Name);
 
-					//플레이어의 공격력과 몬스터의 방어력을 비교하여 데미지를 계산하는 조건문
-					if (Objects[PLAYER]->Info.Att > Objects[ENEMY]->Info.Def)
-						Objects[ENEMY]->Info.HP -= (Objects[PLAYER]->Info.Att - Objects[ENEMY]->Info.Def);
-					// 방어력이 더 높을 경우 최소 1의 데미지를 주려고함
-					else
-						Objects[ENEMY]->Info.HP -= 1;
+					PlayerAttack();
 					// 공격시 나타나는 문구를 보이기 위한 딜레이 함수
 					Sleep(500);
-
+					
 					//플레이어 공격 후 정보창 갱신
-					system("cls");
-					printf_s("[Player] : %s\n", Objects[PLAYER]->Info.Name);
-					printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
-					printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
-					printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
-					printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
-					printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
-					printf_s("경험치 : %d\n\n", Objects[PLAYER]->Info.EXP);
-
-					printf_s("\n%s\n", Objects[ENEMY]->Info.Name);
-					printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
-					printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
-					printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
-					printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
-					printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
-					printf_s("경험치 : %d\n\n", Objects[ENEMY]->Info.EXP);
+					Status();
 
 					//플레이어 공격 후 몬스터의 공격
-					printf_s("몬스터의 공격!!\n");
-					if (Objects[ENEMY]->Info.Att > Objects[PLAYER]->Info.Def)
-						Objects[PLAYER]->Info.HP -= (Objects[ENEMY]->Info.Att - Objects[PLAYER]->Info.Def);
-					else
-						Objects[PLAYER]->Info.HP -= 1;
+					EnemyAttack();
 
 					//몬스터 공격 문구를 보이기 위한 딜레이 함수
 					Sleep(500);
 
 					// 몬스터 공격 후 정보창 갱신
-					system("cls");
-					printf_s("[Player] : %s\n", Objects[PLAYER]->Info.Name);
-					printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
-					printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
-					printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
-					printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
-					printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
-					printf_s("경험치 : %d\n\n", Objects[PLAYER]->Info.EXP);
-
-					printf_s("\n%s\n", Objects[ENEMY]->Info.Name);
-					printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
-					printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
-					printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
-					printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
-					printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
-					printf_s("경험치 : %d\n\n", Objects[ENEMY]->Info.EXP);
+					Status();
 
 					break;
 
@@ -318,29 +258,10 @@ void StageScene()
 							Sleep(500);
 
 							// 도망 실패 시 턴 소모로 몬스터의 공격을 받게하기위함
-							printf_s("몬스터의 공격!!\n");
-							if (Objects[ENEMY]->Info.Att > Objects[PLAYER]->Info.Def)
-								Objects[PLAYER]->Info.HP -= (Objects[ENEMY]->Info.Att - Objects[PLAYER]->Info.Def);
-							else
-								Objects[PLAYER]->Info.HP -= 1;
+							EnemyAttack();
 							Sleep(500);
 
-							system("cls");
-							printf_s("[Player] : %s\n", Objects[PLAYER]->Info.Name);
-							printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
-							printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
-							printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
-							printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
-							printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
-							printf_s("경험치 : %d\n\n", Objects[PLAYER]->Info.EXP);
-
-							printf_s("\n%s\n", Objects[ENEMY]->Info.Name);
-							printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
-							printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
-							printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
-							printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
-							printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
-							printf_s("경험치 : %d\n\n", Objects[ENEMY]->Info.EXP);
+							Status();
 						}
 					}
 
@@ -349,65 +270,69 @@ void StageScene()
 						printf_s("%s는 도망치치 못했다.\n", Objects[PLAYER]->Info.Name);
 						Sleep(500);
 
-						printf_s("몬스터의 공격!!\n");
-						if (Objects[ENEMY]->Info.Att > Objects[PLAYER]->Info.Def)
-							Objects[PLAYER]->Info.HP -= (Objects[ENEMY]->Info.Att - Objects[PLAYER]->Info.Def);
-
-						else
-							Objects[PLAYER]->Info.HP -= 1;
+						EnemyAttack();
 
 						Sleep(500);
 
-						system("cls");
-						printf_s("[Player] : %s\n", Objects[PLAYER]->Info.Name);
-						printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
-						printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
-						printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
-						printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
-						printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
-						printf_s("경험치 : %d\n\n", Objects[PLAYER]->Info.EXP);
-
-						printf_s("\n%s\n", Objects[ENEMY]->Info.Name);
-						printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
-						printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
-						printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
-						printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
-						printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
-						printf_s("경험치 : %d\n\n", Objects[ENEMY]->Info.EXP);
+						Status();
 					}
 					break;
 
 				// 잘못된 입력시 턴 소모 하게 만들기 위함
 				default:
-					printf_s("잘못된 입력입니다! 몬스터의공격!!\n");
-
-					if (Objects[ENEMY]->Info.Att > Objects[PLAYER]->Info.Def)
-						Objects[PLAYER]->Info.HP -= (Objects[ENEMY]->Info.Att - Objects[PLAYER]->Info.Def);
-
-					else
-						Objects[PLAYER]->Info.HP -= 1;
+					printf_s("잘못된 입력입니다! ");
+					EnemyAttack();
 
 					Sleep(500);
 
-					system("cls");
-					printf_s("[Player] : %s\n", Objects[PLAYER]->Info.Name);
-					printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
-					printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
-					printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
-					printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
-					printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
-					printf_s("경험치 : %d\n\n", Objects[PLAYER]->Info.EXP);
-
-					printf_s("\n%s\n", Objects[ENEMY]->Info.Name);
-					printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
-					printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
-					printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
-					printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
-					printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
-					printf_s("경험치 : %d\n\n", Objects[ENEMY]->Info.EXP);
+					Status();
 					break;
 			}
 		}
 
 	}
+}
+
+void Status()
+{
+	system("cls");
+
+	//플레이어의 정보를 출력
+	printf_s("[Player] : %s\n", Objects[PLAYER]->Info.Name);
+	printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
+	printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
+	printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
+	printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
+	printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
+	printf_s("경험치 : %d\n", Objects[PLAYER]->Info.EXP);
+
+	//몬스터의 정보를 출력
+	printf_s("\n%s\n", Objects[ENEMY]->Info.Name);
+	printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
+	printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
+	printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
+	printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
+	printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
+	printf_s("경험치 : %d\n", Objects[ENEMY]->Info.EXP);
+
+}
+
+void PlayerAttack()
+{
+	printf_s("%s의 공격!!\n", Objects[PLAYER]->Info.Name);
+	//플레이어의 공격력과 몬스터의 방어력을 비교하여 데미지를 계산하는 조건문
+	if (Objects[PLAYER]->Info.Att > Objects[ENEMY]->Info.Def)
+		Objects[ENEMY]->Info.HP -= (Objects[PLAYER]->Info.Att - Objects[ENEMY]->Info.Def);
+	// 방어력이 더 높을 경우 최소 1의 데미지를 주려고함
+	else
+		Objects[ENEMY]->Info.HP -= 1;
+}
+
+void EnemyAttack()
+{
+	printf_s("몬스터의 공격!!\n");
+	if (Objects[ENEMY]->Info.Att > Objects[PLAYER]->Info.Def)
+		Objects[PLAYER]->Info.HP -= (Objects[ENEMY]->Info.Att - Objects[PLAYER]->Info.Def);
+	else
+		Objects[PLAYER]->Info.HP -= 1;
 }
