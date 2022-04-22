@@ -68,8 +68,19 @@ void EnemyAttack();
 
 int main(void)
 {
+	/*
+	* /***** 포인터는 주소만 받는다 데이터는 대입 불가
+	int iNumber = 10;
+	int* pNumber = (int*)malloc(sizeof(int));
+
+	// 힙 영역에 값을 넣기위해 pNumber 앞에 * 를 넣는다
+	*pNumber = iNumber; 
+	//힙영역의 주소 = iNumber ;
+	*/
+
 	//Scene을 실행하기 위한 변수 초기화
 	SceneState = 0;
+
 	while (Loop)
 	{
 		// 변수 SceneState를 함수 SceneManger에 넣어 작동 한다
@@ -198,6 +209,24 @@ void MenuScene()
 void StageScene()										
 {
 	srand(time(NULL));									//rand 함수를 사용하기위한 초기화
+
+	// malloc 함수는 실행이 되면 주소값을 반환한다		** malloc함수의 반환 값을 변수에 대입하지 않으면 메모리 누수가 발생한다.
+	//					힙영역에 공간을 만든다
+	/*
+	* 
+	* int iNumber=10;
+	* 
+	// 힢 영역에 공간을 만들고 주소값을 포인터 pNumber에 대입
+	//pNumber로 힢에 할당된 공간에 접근 가능
+	* int*pNumber = (int*) malloc(sizeof(int)); 
+	* 
+	// 포인터 pNumber에 iNumber의 주소값을 대입
+	// ** 더 이상 pNumber로 힢영역에 만든 공간에 접근 불가 하게됨 (메모리 누수)
+	* pNumber = &iNumber;						
+	* 
+	*/
+
+
 
 	Objects[PLAYER] = (Object*)malloc(sizeof(Object));	//PLAYER 동적할당
 	InitializeObject(Objects[PLAYER], PLAYER);			//초기화
