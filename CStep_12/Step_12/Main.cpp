@@ -8,24 +8,17 @@
 #include <malloc.h>
 #include <Windows.h>
 
-// 변수를 상수로 선언하여 배열로 관리하기위해 사용
-const int PLAYER = 0;				
-const int ENEMY = 1;
-const int MAX = 2;
-
 const int Scene_Logo = 0;
 const int Scene_Menu = 1;
 const int Scene_Stage = 2;
 const int Scene_Exit = 3;
 
-// Scene전환을 위해 전역변수로 선언
-int SceneState;		
+int Check = 1;
 
-// 루프를 위한 전역 변수
-short Loop = 1;
+// Scene전환을 위해 전역변수로 선언
+int SceneState = 0;
 
 //구조체안에는 사용자가 사용하고 싶은 것을 넣어서 용도별로 구축한다
-
 // Status 구조체
 typedef struct tagInfo				
 {
@@ -51,23 +44,59 @@ typedef struct tagObject
 	INFO Info;
 }Object;
 
-// 객체를 배열로 관리하기위한 전역변수
-Object* Objects[MAX];
-
 // 함수 전방 선언
-void InitializeObject(Object* _obj, int ObjectType);	// 객체정보를 초기화하기위한 함수
 char* SetName();
 
-void SceneManager(int SceneState);
+void SceneManager(Object* Player, Object* Enemy);
 void LogoScene();
 void MenuScene();
-void StageScene();
-void Status();
-void PlayerAttack();
-void EnemyAttack();
+void StageScene(Object* Player, Object* Enemy);
+
+void PlayerScene(Object* Playe);
+void InitializeObjectPlayer(Object* Player);
+
+void EnemyScene(Object* Enemy);
+void InitializeObjectEnemy(Object* Enemy);
+
+void PlayerStatus(Object* Player);
+void EnemyStatus(Object* Enemy);
+void PlayerAttack(Object* Player, Object* Enemy);
+void EnemyAttack(Object* Player, Object* Enemy);
+
 
 int main(void)
 {
+	Object* Player = (Object*)malloc(sizeof(Object));		//PLAYER 동적할당
+	InitializeObjectPlayer(Player);							//초기화
+	Object* Enemy = (Object*)malloc(sizeof(Object));		//ENEMY 동적할당
+	InitializeObjectEnemy(Enemy);							//초기화
+
+	// GetTickCount 1/1000부터 점점 증가
+	DWORD dwTime = GetTickCount(); // typedef unsigned long DWORD
+	int Delay = 1000;
+
+	int UpCount = 0;
+
+	while (true)
+	{
+		//Scene을 실행하기 위한 변수 초기화
+		
+		// ** 1초마다 실행되는 루프
+		// 처음에는 0+1000 < GetTickCount()
+		if (dwTime + Delay < GetTickCount())	
+		{
+			//GetTickCount가 1000보다 커졌을때 대입
+			dwTime = GetTickCount(); //dwTime = 1001
+
+			system("cls");
+
+			printf_s("%s\n", Player->Name);
+
+			//** 게임 루프
+			// 변수 SceneState를 함수 SceneManger에 넣어 작동 한다
+			SceneManager(Player, Enemy);
+		}
+	}
 	/*
 	* /***** 포인터는 주소만 받는다 데이터는 대입 불가
 	int iNumber = 10;
@@ -76,54 +105,63 @@ int main(void)
 	// 힙 영역에 값을 넣기위해 pNumber 앞에 * 를 넣는다
 	*pNumber = iNumber; 
 	//힙영역의 주소 = iNumber ;
-	*/
 
-	//Scene을 실행하기 위한 변수 초기화
-	SceneState = 0;
+	// 콜 바이 밸류
+	void ABC(int _i,int _n)
+	{
+		_i =100;										//i_Number1에서 복사해온 값 10을 100으로 변경
+		_n = 200;										//i_Number2에서 복사해온 값 20을 200으로 변경
+
+		printf_s("ABC _i : %d",_i);
+		printf_s("ABC _n : %d",_n);
+	}
+
+	// 콜 바이 래퍼런스
+	void DEF (int* _i,int* _n)
+	{
+		_i = 100;										//i_Number1의 주소로 접근해 값 10을 100으로 변경
+		_n = 100;										//i_Number2의 주소로 접근해 값 10을 200으로 변경
+		printf_s("ABC *_i : %d", *_i);
+		printf_s("ABC *_n : %d", *_n);
+	}
+
+	void main()
+	{
+		int iNumber1 = 10;
+		int iNumber2 = 20;
+
+		printf_f("iNumber1: %d\n", &iNumber1);			//iNumber1의 주소값 출력
+		printf_f("iNumber2: %d\n\n", &iNumber2);		//iNumber2의 주소값 출력
+
+		// 콜 바이 밸류
+		ABC(iNumber1, iNumber2);						// iNumber1,iNumber2의 값을 함수 ABC의 매개변수 _i,_n에 복사
+		printf_f("ABC iNumber1: %d\n",iNumber1);		// iNumber1에 저장 되어있는 값은 변하지 않았으므로 10출력
+		printf_f("ABC iNumber2: %d\n\n",iNumber2);		// iNumber2에 저장 되어있는 값은 변하지 않았으므로 20출력
+
+		// 콜 바이 래퍼런스
+		DEF(&iNumber1, &iNumber2);						// iNumber1, iNumber2의 주소를 함수 DEF의 매개변수 *_i, *_n에 복사
+		printf_f("DEF iNumber1: %d\n",iNumber1);		// iNumber1에 저장 되어있는 값이 변했으므로 100출력
+		printf_f("DEF iNumber2: %d\n\n",iNumber2);		// iNumber2에 저장 되어있는 값이 변했으므로 200출력
+	}
+
+
+
+	
 
 	while (Loop)
 	{
-		// 변수 SceneState를 함수 SceneManger에 넣어 작동 한다
-		SceneManager(SceneState);						
+		
+							
 	}
+	*/
 	
 
 	return 0;
 }
 
 //객체 정보 초기화 함수
-void InitializeObject(Object* _obj, int ObjectType)
-{
 
-	switch (ObjectType)
-	{
-		//PLAYER의 객체 정보를 초기화한다
-		case PLAYER:
-			_obj->Name = SetName();		
-			_obj->Info.HP = 100;
-			_obj->Info.MP = 10;
-			_obj->Info.Att = 10;
-			_obj->Info.Def = 10;
-			_obj->Info.Speed = 10;
-			_obj->Info.Level = 1;
-			_obj->Info.EXP = 0;
-			break;
 
-		//ENEMY의 객체정보를 초기화한다.
-		case ENEMY :
-			_obj->Name = (char*)"Enemy";	
-
-			_obj->Info.HP = 30;
-			_obj->Info.MP = 5;
-			_obj->Info.Att =5;
-			_obj->Info.Def = 15;
-			_obj->Info.Speed = 5;
-			_obj->Info.Level = 1;
-			_obj->Info.EXP = 0;
-			break;
-
-	}
-}
 
 //플레이어 이름을 설정하는 함수
 char* SetName()
@@ -148,7 +186,7 @@ char* SetName()
 	return pName;										
 }
 
-void SceneManager(int SceneState)						// Scene구성
+void SceneManager(Object * Player, Object * Enemy)						// Scene구성
 {
 	switch (SceneState)									//변수에 따라 Scene을 실행하기위한 switch문
 	{
@@ -161,11 +199,12 @@ void SceneManager(int SceneState)						// Scene구성
 		break;
 
 	case Scene_Stage:									
-		StageScene();									// StageScene 실행
+		StageScene(Player, Enemy);									// StageScene 실행
 		break;
 
 	case Scene_Exit:									//종료
-		Loop = 0;
+		
+		exit(NULL);
 		break;
 	}
 }
@@ -206,8 +245,27 @@ void MenuScene()
 
 }
 
-void StageScene()										
+void StageScene(Object* Player, Object *Enemy)
 {
+	// ** 모듈화 함수만들어 용도별로 사용할 수 있게
+	// ** 이동
+	//  * * * 입력(Input)
+	//  * * * 플레이어 좌표데이터 수집
+	//  * * * 게임 공간의 크기 데이터 수집
+	//  * * * 각종 오브젝트들의 이동속도 데이터 수집
+	
+	 
+	// ** 전투
+	PlayerScene(Player);
+	EnemyScene(Enemy);
+
+	// ** 상점
+	// 
+	// ** 강화
+	// 
+	// 
+	
+	/*
 	srand(time(NULL));									//rand 함수를 사용하기위한 초기화
 
 	// malloc 함수는 실행이 되면 주소값을 반환한다		** malloc함수의 반환 값을 변수에 대입하지 않으면 메모리 누수가 발생한다.
@@ -223,16 +281,7 @@ void StageScene()
 	// 포인터 pNumber에 iNumber의 주소값을 대입
 	// ** 더 이상 pNumber로 힢영역에 만든 공간에 접근 불가 하게됨 (메모리 누수)
 	* pNumber = &iNumber;						
-	* 
-	*/
-
-
-
-	Objects[PLAYER] = (Object*)malloc(sizeof(Object));	//PLAYER 동적할당
-	InitializeObject(Objects[PLAYER], PLAYER);			//초기화
-	Objects[ENEMY] = (Object*)malloc(sizeof(Object));	//ENEMY 동적할당
-	InitializeObject(Objects[ENEMY], ENEMY);			//초기화
-	
+	*
 	
 	
 		// 전투 반복을 위한 함수
@@ -334,50 +383,103 @@ void StageScene()
 					break;
 			}
 		}
-
-	
+	*/
 }
 
-void Status()
+
+// 플레이어
+void InitializeObjectPlayer (Object* Player)
+{
+		//PLAYER의 객체 정보를 초기화한다
+			Player->Name = SetName();		
+			Player->Info.HP = 100;
+			Player->Info.MP = 10;
+			Player->Info.Att = 10;
+			Player->Info.Def = 10;
+			Player->Info.Speed = 10;
+			Player->Info.Level = 1;
+			Player->Info.EXP = 0;
+}
+
+DWORD SetnameTime = 0;
+void PlayerScene(Object* Player)
+{
+	if (SetnameTime + 10000 < GetTickCount())
+		Check = 1;
+
+	if (Check)
+	{
+		SetnameTime = GetTickCount();
+
+		Player->Name = SetName();
+		Check = 0;
+	}
+}
+
+
+// 적
+void InitializeObjectEnemy(Object* Enemy)
+{
+	Enemy->Name = (char*)"Enemy";
+	Enemy->Info.HP = 30;
+	Enemy->Info.MP = 5;
+	Enemy->Info.Att = 5;
+	Enemy->Info.Def = 15;
+	Enemy->Info.Speed = 5;
+	Enemy->Info.Level = 1;
+	Enemy->Info.EXP = 0;
+}
+
+void EnemyScene(Object *Enemy)
+{
+
+}
+
+
+/*
+void PlayerStatus(Object* Player)
 {
 	system("cls");
 
 	//플레이어의 정보를 출력
-	printf_s("[Player] : %s\n", Objects[PLAYER]->Name);
-	printf_s("HP : %d\n", Objects[PLAYER]->Info.HP);
-	printf_s("MP : %d\n", Objects[PLAYER]->Info.MP);
-	printf_s("공격력 : %.2f\n", Objects[PLAYER]->Info.Att);
-	printf_s("방어력 : %.2f\n", Objects[PLAYER]->Info.Def);
-	printf_s("레벨 : %d\n", Objects[PLAYER]->Info.Level);
-	printf_s("경험치 : %d\n", Objects[PLAYER]->Info.EXP);
-
-	//몬스터의 정보를 출력
-	printf_s("\n%s\n", Objects[ENEMY]->Name);
-	printf_s("HP : %d\n", Objects[ENEMY]->Info.HP);
-	printf_s("MP : %d\n", Objects[ENEMY]->Info.MP);
-	printf_s("공격력 : %.2f\n", Objects[ENEMY]->Info.Att);
-	printf_s("방어력 : %.2f\n", Objects[ENEMY]->Info.Def);
-	printf_s("레벨 : %d\n", Objects[ENEMY]->Info.Level);
-	printf_s("경험치 : %d\n", Objects[ENEMY]->Info.EXP);
-
+	printf_s("[Player] : %s\n", Player->Name);
+	printf_s("HP : %d\n", Player->Info.HP);
+	printf_s("MP : %d\n", Player->Info.MP);
+	printf_s("공격력 : %.2f\n", Player->Info.Att);
+	printf_s("방어력 : %.2f\n", Player->Info.Def);
+	printf_s("레벨 : %d\n", Player->Info.Level);
+	printf_s("경험치 : %d\n", Player->Info.EXP);
 }
 
-void PlayerAttack()
+void EnemyStatus(Object* Enemy)
 {
-	printf_s("%s의 공격!!\n", Objects[PLAYER]->Name);
+	system("cls");
+	//몬스터의 정보를 출력
+	printf_s("\n%s\n", Enemy->Name);
+	printf_s("HP : %d\n", Enemy->Info.HP);
+	printf_s("MP : %d\n", Enemy->Info.MP);
+	printf_s("공격력 : %.2f\n", Enemy->Info.Att);
+	printf_s("방어력 : %.2f\n", Enemy->Info.Def);
+	printf_s("레벨 : %d\n", Enemy->Info.Level);
+	printf_s("경험치 : %d\n", Enemy->Info.EXP);
+}
+void PlayerAttack(Object* Player,Object* Enemy)
+{
+	printf_s("%s의 공격!!\n", Player->Name);
 	//플레이어의 공격력과 몬스터의 방어력을 비교하여 데미지를 계산하는 조건문
-	if (Objects[PLAYER]->Info.Att > Objects[ENEMY]->Info.Def)
-		Objects[ENEMY]->Info.HP -= (int)(Objects[PLAYER]->Info.Att - Objects[ENEMY]->Info.Def);
+	if (Player->Info.Att > Enemy->Info.Def)
+		Enemy->Info.HP -= (int)(Player->Info.Att - Enemy->Info.Def);
 	// 방어력이 더 높을 경우 최소 1의 데미지를 주려고함
 	else
-		Objects[ENEMY]->Info.HP -= 1;
+		Enemy->Info.HP -= 1;
 }
 
-void EnemyAttack()
+void EnemyAttack(Object* Player,Object* Enemy)
 {
 	printf_s("몬스터의 공격!!\n");
-	if (Objects[ENEMY]->Info.Att > Objects[PLAYER]->Info.Def)
-		Objects[PLAYER]->Info.HP -= (int)(Objects[ENEMY]->Info.Att - Objects[PLAYER]->Info.Def);
+	if (Enemy->Info.Att > Player->Info.Def)
+		Enemy->Info.HP -= (int)(Enemy->Info.Att - Player->Info.Def);
 	else
-		Objects[PLAYER]->Info.HP -= 1;
+		Player->Info.HP -= 1;
 }
+*/
