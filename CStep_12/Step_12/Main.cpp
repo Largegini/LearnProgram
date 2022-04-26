@@ -2,11 +2,13 @@
 #define _CRT_SECURE_NO_WARNINGS		
 
 // 헤더파일을 사용하기위해 선언
-#include <stdio.h>					
+#include <stdio.h>		
+#include <stdlib.h>
 #include <string>
 #include <time.h>
 #include <malloc.h>
 #include <Windows.h>
+
 
 const int Scene_Logo = 0;
 const int Scene_Menu = 1;
@@ -52,11 +54,15 @@ void LogoScene();
 void MenuScene();
 void StageScene(Object* Player, Object* Enemy);
 
-void PlayerScene(Object* Playe);
 void InitializeObjectPlayer(Object* Player);
+void PlayerScene(Object* Playe);
 
-void EnemyScene(Object* Enemy);
 void InitializeObjectEnemy(Object* Enemy);
+void EnemyScene(Object* Enemy);
+
+void SetPosition(int _x, int _y,char* _str,int _Color=2);
+void SetColor(int _Color);
+void HideCursor();
 
 void PlayerStatus(Object* Player);
 void EnemyStatus(Object* Enemy);
@@ -66,12 +72,23 @@ void EnemyAttack(Object* Player, Object* Enemy);
 
 int main(void)
 {
+	// ** 커서를 안보이게 함
+	void HideCursor();
+
+	//콘솔창의 사이즈를 설정
+	system("mode con:cols=120 lines=30");
+
+	//콘솔창의 이름을 설정
+	system("title 안정연 Undead Fantasy v0.1");
+
 	Object* Player = (Object*)malloc(sizeof(Object));		//PLAYER 동적할당
-	InitializeObjectPlayer(Player);							//초기화
-	Object* Enemy = (Object*)malloc(sizeof(Object));		//ENEMY 동적할당
+	InitializeObjectPlayer(Player);							//초기화//ENEMY 동적할당
+
+	Object* Enemy;
+	Enemy = (Object*)malloc(sizeof(Object)*32);
 	InitializeObjectEnemy(Enemy);							//초기화
 
-	// GetTickCount 1/1000부터 점점 증가
+		// GetTickCount 1/1000부터 점점 증가
 	DWORD dwTime = GetTickCount(); // typedef unsigned long DWORD
 	int Delay = 1000;
 
@@ -88,6 +105,7 @@ int main(void)
 			//GetTickCount가 1000보다 커졌을때 대입
 			dwTime = GetTickCount(); //dwTime = 1001
 
+			//콘솔창에 있는 모든내용을 지움
 			system("cls");
 
 			printf_s("%s\n", Player->Name);
@@ -168,7 +186,10 @@ char* SetName()
 {
 	//문자열을 입력받기위한 임의의 배열 선언
 	//포인터로는 문자열을 입력받을 수 없기 때문에 임의의 배열을 선언한다.
-	char Buffer[128] = "";								
+	char Buffer[128] = "";			
+
+	printf_s("지금 눈 뜬 그대 이름은 무엇인가?\n");
+	Sleep(1000);
 
 	printf_s("이름을 입력하십시오. : ");
 
@@ -211,8 +232,15 @@ void SceneManager(Object * Player, Object * Enemy)						// Scene구성
 
 void LogoScene()										//LogoScene
 {
-	printf_s("LogoScene \n");							
+	int Width(120 / 2 - (strlen(" __    _____ _____ _____ ") / 2));
+	int Height = 5;
+	
+	SetPosition(Width, Height,   (char*)" __    _____ _____ _____ ");
+	SetPosition(Width, Height+1, (char*)"|  |  |     |   __|     |");
+	SetPosition(Width, Height+2, (char*)"|  |__|  |  |  |  |  |  |");
+	SetPosition(Width, Height+3, (char*)"|_____|_____|_____|_____|");
 
+	Sleep(3000);
 	//다음Scene으로 가기위한 변수 값 증가
 	SceneState++;										
 }
@@ -222,8 +250,8 @@ void MenuScene()
 	//입력을 받기위한 변수
 	int iChoice = 0;									
 
-	printf_s("MenuScene \n");
-	printf_s("다음 Scene으로 가겠습니까? \n1.이동\n2.종료\n입력 :");
+	printf_s("Undead Fantasy \n");
+	printf_s("1.게임시작\n2.종료\n입력 :");
 	scanf("%d",&iChoice);
 
 	//iChoice값에 따라 씬을 넘어가거나 종료함
@@ -238,7 +266,7 @@ void MenuScene()
 		break;
 
 	default:											//1과 2가아닌 입력을 받았을 경우 처리하기위함
-		printf_s("잘못된 입력입니다! 다음씬으로 강제 이동합니다.\n");
+		printf_s("잘못된 입력입니다! 강제 시작합니다.\n");
 		SceneState++;
 		break;
 	}
@@ -247,6 +275,7 @@ void MenuScene()
 
 void StageScene(Object* Player, Object *Enemy)
 {
+
 	// ** 모듈화 함수만들어 용도별로 사용할 수 있게
 	// ** 이동
 	//  * * * 입력(Input)
@@ -401,33 +430,149 @@ void InitializeObjectPlayer (Object* Player)
 			Player->Info.EXP = 0;
 }
 
-DWORD SetnameTime = 0;
+
 void PlayerScene(Object* Player)
 {
-	if (SetnameTime + 10000 < GetTickCount())
-		Check = 1;
-
-	if (Check)
-	{
-		SetnameTime = GetTickCount();
-
-		Player->Name = SetName();
-		Check = 0;
-	}
+	
 }
 
 
 // 적
 void InitializeObjectEnemy(Object* Enemy)
 {
-	Enemy->Name = (char*)"Enemy";
-	Enemy->Info.HP = 30;
-	Enemy->Info.MP = 5;
-	Enemy->Info.Att = 5;
-	Enemy->Info.Def = 15;
-	Enemy->Info.Speed = 5;
-	Enemy->Info.Level = 1;
-	Enemy->Info.EXP = 0;
+	for (int i = 0; i < 29; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			case 0:
+			Enemy[i].Name = (char*)"시민";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+		}
+	}
+	
 }
 
 void EnemyScene(Object *Enemy)
@@ -435,8 +580,34 @@ void EnemyScene(Object *Enemy)
 
 }
 
+void SetPosition(int _x, int _y, char * _str, int _Color)
+{
+	//SetConsoleCursorPosition 함수의 매개 변수에 들어가야 하기때문에 선언
+	COORD Pos = { _x,_y };	//short형이다.
 
-/*
+	//콘솔 커서 위치 변경 함수
+	//매개변수에 각각 핸들값, 변수 Pos값이 들어가야 한다.
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
+	SetColor(_Color);
+
+	printf_s("%s", _str);
+}
+
+void SetColor(int _Color)
+{
+	//텍스트 색 변경
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _Color);
+}
+
+void HideCursor()
+{
+	CONSOLE_CURSOR_INFO Info;
+
+	Info.dwSize = 1;
+	Info.bVisible = false;
+
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &Info);
+}
 void PlayerStatus(Object* Player)
 {
 	system("cls");
@@ -463,6 +634,7 @@ void EnemyStatus(Object* Enemy)
 	printf_s("레벨 : %d\n", Enemy->Info.Level);
 	printf_s("경험치 : %d\n", Enemy->Info.EXP);
 }
+/*
 void PlayerAttack(Object* Player,Object* Enemy)
 {
 	printf_s("%s의 공격!!\n", Player->Name);
