@@ -43,22 +43,52 @@ typedef struct tagInfo
 typedef struct tagObject		
 {
 	char* Name;
+	
+	
 	INFO Info;
+	
 }Object;
+
+typedef struct tagEquipment
+{
+	int Price;
+	INFO Info;
+	Object object;
+}EQUIPMENT;
+
+typedef struct tagItem
+{
+	int Price;
+}ITEM;
+
+typedef struct tagInventory
+{
+	int Space;
+	int Stock;
+
+}INVENTORY;
 
 // 함수 전방 선언
 char* SetName();
 
-void SceneManager(Object* Player, Object* Enemy);
+void SceneManager(Object* Player, Object* Enemy, EQUIPMENT* Equipment);
 void LogoScene();
 void MenuScene();
-void StageScene(Object* Player, Object* Enemy);
+void StageScene(Object* Player, Object* Enemy, EQUIPMENT* Equipment);
+
+void GraveYard(Object* Player, Object* Enemy, EQUIPMENT* Equipment);
+void GraveYardBackGround();
+void AdventurerVillage(Object* Player, Object* Enemy, EQUIPMENT* Equipment);
+void Castle(Object* Player, Object* Enemy, EQUIPMENT* Equipment);
+void NecromancerTower(Object* Player, Object* Enemy, EQUIPMENT* Equipment);
 
 void InitializeObjectPlayer(Object* Player);
 void PlayerScene(Object* Playe);
 
 void InitializeObjectEnemy(Object* Enemy);
 void EnemyScene(Object* Enemy);
+
+void InitializeEquipment(EQUIPMENT* Equipment);
 
 void SetPosition(int _x, int _y,char* _str,int _Color=2);
 void SetColor(int _Color);
@@ -73,7 +103,7 @@ void EnemyAttack(Object* Player, Object* Enemy);
 int main(void)
 {
 	// ** 커서를 안보이게 함
-	void HideCursor();
+	HideCursor();
 
 	//콘솔창의 사이즈를 설정
 	system("mode con:cols=120 lines=30");
@@ -87,6 +117,10 @@ int main(void)
 	Object* Enemy;
 	Enemy = (Object*)malloc(sizeof(Object)*32);
 	InitializeObjectEnemy(Enemy);							//초기화
+
+	EQUIPMENT* Equipment;
+	Equipment = (EQUIPMENT*)malloc(sizeof(EQUIPMENT) * 4);
+	InitializeEquipment(Equipment);
 
 		// GetTickCount 1/1000부터 점점 증가
 	DWORD dwTime = GetTickCount(); // typedef unsigned long DWORD
@@ -108,11 +142,9 @@ int main(void)
 			//콘솔창에 있는 모든내용을 지움
 			system("cls");
 
-			printf_s("%s\n", Player->Name);
-
 			//** 게임 루프
 			// 변수 SceneState를 함수 SceneManger에 넣어 작동 한다
-			SceneManager(Player, Enemy);
+			SceneManager(Player, Enemy, Equipment);
 		}
 	}
 	/*
@@ -191,7 +223,7 @@ char* SetName()
 	printf_s("지금 눈 뜬 그대 이름은 무엇인가?\n");
 	Sleep(1000);
 
-	printf_s("이름을 입력하십시오. : ");
+	printf_s("내 이름은...\n이름을 입력하십시오. : ");
 
 	//문자열을 입력 받음.
 	scanf("%s", Buffer);
@@ -207,7 +239,7 @@ char* SetName()
 	return pName;										
 }
 
-void SceneManager(Object * Player, Object * Enemy)						// Scene구성
+void SceneManager(Object * Player, Object * Enemy, EQUIPMENT* Equipment)						// Scene구성
 {
 	switch (SceneState)									//변수에 따라 Scene을 실행하기위한 switch문
 	{
@@ -220,7 +252,7 @@ void SceneManager(Object * Player, Object * Enemy)						// Scene구성
 		break;
 
 	case Scene_Stage:									
-		StageScene(Player, Enemy);									// StageScene 실행
+		StageScene(Player, Enemy, Equipment);						// StageScene 실행
 		break;
 
 	case Scene_Exit:									//종료
@@ -273,17 +305,38 @@ void MenuScene()
 
 }
 
-void StageScene(Object* Player, Object *Enemy)
+void StageScene(Object* Player, Object *Enemy, EQUIPMENT* Equipment)
 {
+	int iStage = 0;
+	switch (iStage)									
+	{
+	case 0 :
+		//** 묘지
+		GraveYard(Player, Enemy, Equipment);		
+		break;
 
+	case 1 :
+		// ** 모험가 마을
+		AdventurerVillage(Player, Enemy, Equipment);
+		break;
+
+	case 2 :
+		// ** 왕성
+		Castle(Player, Enemy, Equipment);
+		break;
+
+	case 3 :	
+		// ** 사령술사의 탑
+		NecromancerTower(Player, Enemy, Equipment);
+		break;
+	}
 	// ** 모듈화 함수만들어 용도별로 사용할 수 있게
 	// ** 이동
 	//  * * * 입력(Input)
 	//  * * * 플레이어 좌표데이터 수집
 	//  * * * 게임 공간의 크기 데이터 수집
 	//  * * * 각종 오브젝트들의 이동속도 데이터 수집
-	
-	 
+ 
 	// ** 전투
 	PlayerScene(Player);
 	EnemyScene(Enemy);
@@ -292,7 +345,7 @@ void StageScene(Object* Player, Object *Enemy)
 	// 
 	// ** 강화
 	// 
-	// 
+	
 	
 	/*
 	srand(time(NULL));									//rand 함수를 사용하기위한 초기화
@@ -313,105 +366,7 @@ void StageScene(Object* Player, Object *Enemy)
 	*
 	
 	
-		// 전투 반복을 위한 함수
-		short Battle = 1;								
-		Status();
-
-		//전투
-		while (Battle)
-		{
-			//입력을 받기위한 임의 함수
-			int iChoice = 0;
-
-			printf_s("몬스터와 조우했다!!\n1.공격\n2. 도망\n입력 : ");
-			scanf_s("%d", &iChoice);
-
-			//입력받은 값에 따른 전투진행 
-			switch (iChoice)
-			{
-				//공격을 선택했을 때
-				case 1:
-
-					PlayerAttack();
-					// 공격시 나타나는 문구를 보이기 위한 딜레이 함수
-					Sleep(500);
-					
-					//플레이어 공격 후 정보창 갱신
-					Status();
-
-					//플레이어 공격 후 몬스터의 공격
-					EnemyAttack();
-
-					//몬스터 공격 문구를 보이기 위한 딜레이 함수
-					Sleep(500);
-
-					// 몬스터 공격 후 정보창 갱신
-					Status();
-
-					break;
-
-				//도망을 선택했을 때
-				case 2:
-
-					//플레이어의 Speed 가 적보다 높을 때 도망칠수 있게 함
-					if (Objects[PLAYER]->Info.Speed > Objects[ENEMY]->Info.Speed)
-					{
-						//도망도 확률로 할 수있게 함
-						//주사위 굴리는 시스템 채용
-						if (rand() % 6 > 2)	
-						{
-							printf_s("%s(은)는 도망쳤다.\n", Objects[PLAYER]->Name);
-
-							//전투 종료 루프해제
-							Battle = 0;
-
-							// 도망 시 적의 정보 초기화
-							InitializeObject(Objects[ENEMY], ENEMY);
-
-							//도망문구를 보이기위한 딜레이
-							Sleep(500);
-						}
-
-						// 도망 실패 시
-						else
-						{
-							printf_s("%s는 도망치치 못했다.\n", Objects[PLAYER]->Name);
-
-							// 도망치지 못했을 때 문구를 보이기위한 딜레이
-							Sleep(500);
-
-							// 도망 실패 시 턴 소모로 몬스터의 공격을 받게하기위함
-							EnemyAttack();
-							Sleep(500);
-
-							Status();
-						}
-					}
-
-					else
-					{
-						printf_s("%s는 도망치치 못했다.\n", Objects[PLAYER]->Name);
-						Sleep(500);
-
-						EnemyAttack();
-
-						Sleep(500);
-
-						Status();
-					}
-					break;
-
-				// 잘못된 입력시 턴 소모 하게 만들기 위함
-				default:
-					printf_s("잘못된 입력입니다! ");
-					EnemyAttack();
-
-					Sleep(500);
-
-					Status();
-					break;
-			}
-		}
+		
 	*/
 }
 
@@ -420,7 +375,7 @@ void StageScene(Object* Player, Object *Enemy)
 void InitializeObjectPlayer (Object* Player)
 {
 		//PLAYER의 객체 정보를 초기화한다
-			Player->Name = SetName();		
+					
 			Player->Info.HP = 100;
 			Player->Info.MP = 10;
 			Player->Info.Att = 10;
@@ -440,7 +395,7 @@ void PlayerScene(Object* Player)
 // 적
 void InitializeObjectEnemy(Object* Enemy)
 {
-	for (int i = 0; i < 29; i++)
+	for (int i = 0; i < 30; i++)
 	{
 		switch (i)
 		{
@@ -451,131 +406,371 @@ void InitializeObjectEnemy(Object* Enemy)
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 1:
+			Enemy[i].Name = (char*)"모험가";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 2:
+			Enemy[i].Name = (char*)"도적";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 3:
+			Enemy[i].Name = (char*)"슬라임";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 4:
+			Enemy[i].Name = (char*)"고블린";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 5:
+			Enemy[i].Name = (char*)"고블린전사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 6:
+			Enemy[i].Name = (char*)"고블린투척병";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 7:
+			Enemy[i].Name = (char*)"고블린라이더";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 8:
+			Enemy[i].Name = (char*)"오크";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 9:
+			Enemy[i].Name = (char*)"오크전사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 10:
+			Enemy[i].Name = (char*)"오크주술사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 11:
+			Enemy[i].Name = (char*)"오우거";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 12:
+			Enemy[i].Name = (char*)"병사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 13:
+			Enemy[i].Name = (char*)"기사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 14:
+			Enemy[i].Name = (char*)"마법사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 15:
+			Enemy[i].Name = (char*)"사제";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-		case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 16:
+			Enemy[i].Name = (char*)"성기사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
-			case 0:
-			Enemy[i].Name = (char*)"시민";
+			break;
+		case 17:
+			Enemy[i].Name = (char*)"마검사";
 			Enemy[i].Info.HP = 30;
 			Enemy[i].Info.MP = 5;
 			Enemy[i].Info.Att = 5;
 			Enemy[i].Info.Def = 15;
 			Enemy[i].Info.Speed = 5;
+			break;
+		case 18:
+			Enemy[i].Name = (char*)"불의정령";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 19:
+			Enemy[i].Name = (char*)"물의정령";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 20:
+			Enemy[i].Name = (char*)"바람정령";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 21:
+			Enemy[i].Name = (char*)"땅의정령";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 22:
+			Enemy[i].Name = (char*)"정령사";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 23:
+			Enemy[i].Name = (char*)"해골";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 24:
+			Enemy[i].Name = (char*)"해골병사";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 25:
+			Enemy[i].Name = (char*)"해골궁수";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 26:
+			Enemy[i].Name = (char*)"리치";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 27:
+			Enemy[i].Name = (char*)"좀비";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 28:
+			Enemy[i].Name = (char*)"흑마법사";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 29:
+			Enemy[i].Name = (char*)"사령술사";
+			Enemy[i].Info.HP = 30;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 15;
+			Enemy[i].Info.Speed = 5;
+			break;
+		case 30:
+			Enemy[i].Name = (char*)"쥐";
+			Enemy[i].Info.HP = 10;
+			Enemy[i].Info.MP = 5;
+			Enemy[i].Info.Att = 5;
+			Enemy[i].Info.Def = 5;
+			Enemy[i].Info.Speed = 5;
+			break;
+
 		}
 	}
 	
 }
 
 void EnemyScene(Object *Enemy)
+{
+
+}
+
+void InitializeEquipment(EQUIPMENT* Equipment)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		switch (i)
+		{
+		case 0 :
+			Equipment[i].object.Name = (char*)"오래된 검";
+			Equipment[i].Info.Att = 5;
+			break;
+		case 1:
+			Equipment[i].object.Name = (char*)"오래된 도끼";
+			Equipment[i].Info.Att = 7;
+			Equipment[i].Info.Speed = -2;
+			break;
+		case 2:
+			Equipment[i].object.Name = (char*)"오래된 창";
+			Equipment[i].Info.Att = 4;
+			Equipment[i].Info.Speed = 1;
+			break;
+		case 3:
+			Equipment[i].object.Name = (char*)"오래된 활";
+			Equipment[i].Info.Att = 5;
+		}
+	}
+}
+
+void GraveYard(Object * Player, Object* Enemy,EQUIPMENT* Equipment)
+{
+	int iChoice = 0;
+
+	srand(time(NULL));
+
+	SetColor(15);
+
+	printf_s("눈앞에 묘지의 풍경이 펼쳐진다\n");
+
+	GraveYardBackGround();
+
+	Player->Name = SetName();
+
+	while (true)
+	{
+		int iStartWeapon = 0;
+		
+		system("cls");
+		GraveYardBackGround();
+	
+		printf_s("내가 일어난 곳에 뭔가 있는거 같다\n");
+		printf_s("1.가져간다 2.그냥 놔둔다 입력: ");
+		scanf_s("%d", &iChoice);
+		switch (iChoice)
+		{
+			case 1:
+				
+				iStartWeapon = rand() % 4;
+				printf_s("%s를 발견했다!\n",Equipment[iStartWeapon].object.Name);
+				Player->Info.Att += Equipment[iStartWeapon].Info.Att;
+	
+				break;
+			default :
+				printf_s("우선 마을로 가서 정보를 모아야겠어\n");
+				break;
+		}
+	}
+
+
+
+}
+
+void GraveYardBackGround()
+{
+	printf_s("                                                                                            #@@@@                       \n");
+	printf_s("                                                #@@@$                 $@@@@@$               @   $                       \n");
+	printf_s("              $@@@@@@$                          @   @                $@     @@$             @   @                       \n");
+	printf_s("            $@@      @@@$                  =$   @   @               $@        @$         @@@@   @@@$                    \n");
+	printf_s("           $@           @$                 *@@$ @   @               @          @         @         @                    \n");
+	printf_s("           @             @$                @  @@@   @              $@          @$        #         @                    \n");
+	printf_s("          $@              @                @    @@$ @              @            @        @@@#   @@@@                    \n");
+	printf_s("          @               @                @$   @ @@@@@$          $@            @           @   $                       \n");
+	printf_s("          @ $@$=@@@@$ $=  @                 @$  @   @  @@$        @             @           @   @                       \n");
+	printf_s("          @ @ @@$   @@@   @                  @@$@   @    @       $@             @           @   @                       \n");
+	printf_s("          @$@   @@@$      @                    @@@$ @    @       @              @           @   @                       \n");
+	printf_s("     $@@@@@@     $@@      @                     @ @@@    @       @              @          $@@@@@$                      \n");
+	printf_s("     @        =@@@        ,$                    @   @@@@@@       @              @       $@@@     @@$              $@@$  \n");
+	printf_s("    =@         @@@@$       @                    @   @            @              @      $@          @$         $@@@@  @@@\n");
+	printf_s("     @@@$          @$=@=   @                    @   @            @              @     $@            @$      $@@         \n");
+	printf_s("       $@          $@      @=@@@@$              @   @            @              @     @              @$   $@@           \n");
+	printf_s("      *@    $@@@@@@@       @     @@@@$          @  $@            @              #    $@               @  $@             \n");
+	printf_s("     $@@    @              @         @@$        @  ##         *=@@@@@@@@@@@@@@@@@@$ $@                @$=@              \n");
+	printf_s("     @@    $@  =@@@@@@@=   @           @$*  $@@@@= =@@@@$     @                   @ @                  @                \n");
+	printf_s("    $@@   $@        #      @            #@$ @           @    $@     $@@@@$        @ @                  @$               \n");
+	printf_s("   $@=@  $@                @              @$@@          @    @      @=   @@=      @ @    =@@@@@@@@$     @               \n");
+	printf_s("   @     @                 @               @@@         $@    @    $@@    #  =@$   @$@             @=    @               \n");
+	printf_s("  $@    $@   $@@@@@@@@@@@= @@@$             @#         @     @   $@           @  $@@                    @               \n");
+	printf_s(" $@    $@    #                @             @          @     @$@=@            @ *, @      $$            @$              \n");
+	printf_s("$@     @                      @             @          @     @@  @            @$   @     =@@@@@@@@=      @              \n");
+	printf_s("@     $@                      @             @          @         @             @   @                     @              \n");
+	printf_s("#     #                       @             @$         @$        @             @   @                     @              \n");
+	printf_s("			                    #              #          @       $@             @   #                     #              \n");
+}
+
+void AdventurerVillage(Object* Player, Object* Enemy, EQUIPMENT* Equipment)
+{
+
+}
+
+void Castle(Object* Player, Object* Enemy, EQUIPMENT* Equipment)
+{
+
+}
+
+void NecromancerTower(Object* Player, Object* Enemy, EQUIPMENT* Equipment)
 {
 
 }
@@ -635,6 +830,109 @@ void EnemyStatus(Object* Enemy)
 	printf_s("경험치 : %d\n", Enemy->Info.EXP);
 }
 /*
+
+void Battle()
+{
+// 전투 반복을 위한 함수
+		short Battle = 1;
+		Status();
+
+		//전투
+		while (Battle)
+		{
+			//입력을 받기위한 임의 함수
+			int iChoice = 0;
+
+			printf_s("몬스터와 조우했다!!\n1.공격\n2. 도망\n입력 : ");
+			scanf_s("%d", &iChoice);
+
+			//입력받은 값에 따른 전투진행
+			switch (iChoice)
+			{
+				//공격을 선택했을 때
+				case 1:
+
+					PlayerAttack();
+					// 공격시 나타나는 문구를 보이기 위한 딜레이 함수
+					Sleep(500);
+
+					//플레이어 공격 후 정보창 갱신
+					Status();
+
+					//플레이어 공격 후 몬스터의 공격
+					EnemyAttack();
+
+					//몬스터 공격 문구를 보이기 위한 딜레이 함수
+					Sleep(500);
+
+					// 몬스터 공격 후 정보창 갱신
+					Status();
+
+					break;
+
+				//도망을 선택했을 때
+				case 2:
+
+					//플레이어의 Speed 가 적보다 높을 때 도망칠수 있게 함
+					if (Objects[PLAYER]->Info.Speed > Objects[ENEMY]->Info.Speed)
+					{
+						//도망도 확률로 할 수있게 함
+						//주사위 굴리는 시스템 채용
+						if (rand() % 6 > 2)
+						{
+							printf_s("%s(은)는 도망쳤다.\n", Objects[PLAYER]->Name);
+
+							//전투 종료 루프해제
+							Battle = 0;
+
+							// 도망 시 적의 정보 초기화
+							InitializeObject(Objects[ENEMY], ENEMY);
+
+							//도망문구를 보이기위한 딜레이
+							Sleep(500);
+						}
+
+						// 도망 실패 시
+						else
+						{
+							printf_s("%s는 도망치치 못했다.\n", Objects[PLAYER]->Name);
+
+							// 도망치지 못했을 때 문구를 보이기위한 딜레이
+							Sleep(500);
+
+							// 도망 실패 시 턴 소모로 몬스터의 공격을 받게하기위함
+							EnemyAttack();
+							Sleep(500);
+
+							Status();
+						}
+					}
+
+					else
+					{
+						printf_s("%s는 도망치치 못했다.\n", Objects[PLAYER]->Name);
+						Sleep(500);
+
+						EnemyAttack();
+
+						Sleep(500);
+
+						Status();
+					}
+					break;
+
+				// 잘못된 입력시 턴 소모 하게 만들기 위함
+				default:
+					printf_s("잘못된 입력입니다! ");
+					EnemyAttack();
+
+					Sleep(500);
+
+					Status();
+					break;
+			}
+		}
+}
 void PlayerAttack(Object* Player,Object* Enemy)
 {
 	printf_s("%s의 공격!!\n", Player->Name);
