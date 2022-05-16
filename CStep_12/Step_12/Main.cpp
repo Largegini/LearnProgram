@@ -22,7 +22,7 @@ const int Scene_Exit = 3;
 int SceneState;		
 
 // 루프를 위한 전역 변수
-short Loop = 1;
+char Loop = 1;
 
 // Status 정보 구조체를 구축
 typedef struct tagInfo				
@@ -138,6 +138,8 @@ void SceneManager(int SceneState)						// Scene구성
 		break;
 	case Scene_Exit:									//종료
 		Loop = 0;
+//	exit(NULL);// ** 프로그램 종료
+
 		break;
 	}
 }
