@@ -81,8 +81,7 @@ int main(void)
 
 	Initialize(Player, nullptr, 10, 20, 30);
 
-	//Initialize(Enemy, (char*)"Enemy", 100, 200, 300);
-	Initialize(Enemy, nullptr, 100, 200, 300);
+	Initialize(Enemy, (char*)"Enemy", 100, 200, 300);
 	
 	Output(Player);
 
