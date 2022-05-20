@@ -61,6 +61,8 @@ int main(void)
 
 	int iScore = 0;
 
+	bool Hit = false;
+
 	while (true)
 	{
 		//	초기화된 시간으로부터 Delay의 값만큼 증가하면
@@ -88,8 +90,17 @@ int main(void)
 			{
 				if (Bullet[i] != nullptr)
 				{
+					Hit = Collision(Bullet[i], Enemy);
+
+					if (Hit == true)
+					{
+						delete Bullet[i];
+						Bullet[i] = nullptr;
+
+						BulletCount--;
+					}
 					//	화면 밖으로 나간 총알 지우기
-					if ((Bullet[i]->TransInfo.Position.x + Bullet[i]->TransInfo.Scale.x) >= 120)
+					else if ((Bullet[i]->TransInfo.Position.x + Bullet[i]->TransInfo.Scale.x) >= 120)
 					{
 						// 지우고 난 뒤에 바로 접근 하면 프로그램 터짐
 						delete Bullet[i];
@@ -97,10 +108,31 @@ int main(void)
 
 						BulletCount--;
 					}
+
 				}
 			}
 
-			//Bullet충돌만들기(Enemy와 충돌후 Bullet삭제되는것 까지)
+			if (GetAsyncKeyState(VK_UP))
+				Player->TransInfo.Position.y -= 1;
+			if (GetAsyncKeyState(VK_DOWN))
+				Player->TransInfo.Position.y += 1;
+			if (GetAsyncKeyState(VK_LEFT))
+				Player->TransInfo.Position.x-= 1;
+			if (GetAsyncKeyState(VK_RIGHT))
+				Player->TransInfo.Position.x += 1;
+			if (GetAsyncKeyState(VK_SPACE))
+			{
+				for (int i = 0; i < 128; ++i)
+				{
+					if (Bullet[i] == nullptr)
+					{
+						Bullet[i] = CreateBullet(Player->TransInfo.Position.x,
+							Player->TransInfo.Position.y);
+						++BulletCount;
+						break;
+					}
+				}
+			}
 			Collision(Player, Enemy);
 
 			OnDrawText(Enemy->Info.Texture, Enemy->TransInfo.Position.x, 
@@ -118,11 +150,11 @@ int main(void)
 						Bullet[i]->TransInfo.Position.y);
 			}
 
-			OnDrawText((char*)"BulletCount : ", 110, 1);
-			OnDrawText(BulletCount, 100 + strlen("BulletCount : "), 1);
+			OnDrawText((char*)"BulletCount : ", 100, 1);
+			OnDrawText(BulletCount, 100 + (int)(strlen("BulletCount : ")), 1);
 			
 
-			OnDrawText((char*)"Score : ", 60 - strlen("Score : "), 1);
+			OnDrawText((char*)"Score : ", (int)(60 - strlen("Score : ")), 1);
 			OnDrawText(++iScore, 60, 1);
 
 		}

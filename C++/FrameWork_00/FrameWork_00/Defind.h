@@ -16,7 +16,7 @@ void OnDrawText(const char* _str, const int _x, const int _y, const int _Color =
 void OnDrawText(const int _Value, const int _x, const int _y, const int _Color = 15);
 
 //	**** 충돌처리를 함
-void Collision(Object* _ObjectA, Object* _ObjectB);
+bool Collision(Object* _ObjectA, Object* _ObjectB);
 // **** bullet을 생성함
 Object* CreateBullet(const int _x, const int _y);
 
@@ -52,20 +52,23 @@ void Initialize(Object* _Object, char* _Name, int _PosX, int _PosY, int _PosZ)
 
 	_Object->TransInfo.Position = Vector3(_PosX, _PosY, _PosZ);
 	_Object->TransInfo.Rotation = Vector3(0, 0, 0);
-	_Object->TransInfo.Scale = Vector3(strlen(_Object->Info.Texture), 1, 0);
+	_Object->TransInfo.Scale = Vector3((int)strlen(_Object->Info.Texture), 1, 0);
 }
 
 //충돌
-void Collision(Object* _ObjectA, Object* _ObjectB)
+bool Collision(Object* _ObjectA, Object* _ObjectB)
 {
-
+	bool Coll = false;
 	if ((_ObjectA->TransInfo.Position.x + _ObjectA->TransInfo.Scale.x) > _ObjectB->TransInfo.Position.x &&
 		(_ObjectB->TransInfo.Position.x + _ObjectB->TransInfo.Scale.x) > _ObjectA->TransInfo.Position.x &&
 		_ObjectA->TransInfo.Position.y == _ObjectB->TransInfo.Position.y
 		)
 	{
-		OnDrawText((char*)"충돌 입니다.", 60 - strlen("충돌 입니다.") / 2, 0, 14);
+		OnDrawText((char*)"충돌 입니다.", 60 - (int)(strlen("충돌 입니다.")) / 2, 0, 14);
+		Coll = true;
 	}
+
+	return Coll;
 }
 
 Object* CreateBullet(const int _x, const int _y)
@@ -103,7 +106,7 @@ void OnDrawText(const int _Value, const int _x, const int _y, const int _Color)
 	SetCursorPosition(_x, _y);
 	SetTextColor(_Color);
 
-	char* pText = new char[4];
+	char* pText = new char[8];
 	_itoa(_Value, pText, 10);
 
 	cout << _Value;
