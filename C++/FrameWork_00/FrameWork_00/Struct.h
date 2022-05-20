@@ -3,7 +3,7 @@
 // 2D개발에 Vector2를 이용 하지만 반드시 그런 것은 아님
 struct Vector3
 {
-	int x = 0, y = 0, z = 0;
+	float x = 0, y = 0, z = 0;
 
 	// 기본 생성자
 	// 매개변수가 없어야 기본 생성자
@@ -16,11 +16,11 @@ struct Vector3
 	//** 매개변수의 갯수와 형태에 따라서 많은 생성자를 만들 수 있다
 	// 매개변수에 따라 컴파일러가 선택해서 호출
 	// ':'를 이용한 간략화는 C++에 있는 기능 C로는 불가
-	Vector3(int _x, int _y)
+	Vector3(float _x, float _y)
 		//x(_x) 대입연산만 이렇게 간략화 가능
 		: x(_x), y(_y), z(0) { };
 
-	Vector3(int _x, int _y, int _z)
+	Vector3(float _x, float _y, float _z)
 		: x(_x), y(_y), z(_z) { };
 
 };

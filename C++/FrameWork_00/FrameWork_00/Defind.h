@@ -11,14 +11,15 @@ void SetCursorPosition(int _x, int _y);
 void SetTextColor(int _Color);
 
 //	출력할 Text의 위치와 색상을 변경해 준다. (Color 기본 값은 15(흰색) 
-void OnDrawText(const char* _str, const int _x, const int _y, const int _Color = 15);
+void OnDrawText(const char* _str, const float _x, const float _y, const int _Color = 15);
 //	출력할 숫자의 위치와 색상을 변경해 준다. (Color 기본 값은 15(흰색) 
-void OnDrawText(const int _Value, const int _x, const int _y, const int _Color = 15);
+void OnDrawText(const int _Value, const float _x, const float _y, const int _Color = 15);
 
 //	**** 충돌처리를 함
 bool Collision(Object* _ObjectA, Object* _ObjectB);
 // **** bullet을 생성함
-Object* CreateBullet(const int _x, const int _y);
+Object* CreateBullet(const float _x, const float _y);
+Object* CreateEnemy(const float _x, const float _y);
 
 //	커서 표시(true)/비표시(false)
 void HideCursor(bool _Visible);
@@ -42,7 +43,7 @@ char* SetName(Object* _Player)
 	return pName;
 }
 
-void Initialize(Object* _Object, char* _Name, int _PosX, int _PosY, int _PosZ)
+void Initialize(Object* _Object, char* _Name, float _PosX, float _PosY, float _PosZ)
 {
 	//삼항 연산자  조건 ? A : B
 	// 조건이 True면 A실행 False면 B실행
@@ -52,7 +53,7 @@ void Initialize(Object* _Object, char* _Name, int _PosX, int _PosY, int _PosZ)
 
 	_Object->TransInfo.Position = Vector3(_PosX, _PosY, _PosZ);
 	_Object->TransInfo.Rotation = Vector3(0, 0, 0);
-	_Object->TransInfo.Scale = Vector3((int)strlen(_Object->Info.Texture), 1, 0);
+	_Object->TransInfo.Scale = Vector3((float)strlen(_Object->Info.Texture), 1, 0);
 }
 
 //충돌
@@ -63,21 +64,27 @@ bool Collision(Object* _ObjectA, Object* _ObjectB)
 		(_ObjectB->TransInfo.Position.x + _ObjectB->TransInfo.Scale.x) > _ObjectA->TransInfo.Position.x &&
 		_ObjectA->TransInfo.Position.y == _ObjectB->TransInfo.Position.y
 		)
-	{
-		OnDrawText((char*)"충돌 입니다.", 60 - (int)(strlen("충돌 입니다.")) / 2, 0, 14);
-		Coll = true;
-	}
+		return true;
 
-	return Coll;
+	return false;
 }
 
-Object* CreateBullet(const int _x, const int _y)
+Object* CreateBullet(const float _x, const float _y)
 {
 	Object* pBullet = new Object;
 
-	Initialize(pBullet, (char*)"장풍!!", _x + 2, _y);
+	Initialize(pBullet, (char*)"장풍!!", _x + 2.0f, _y);
 
 	return pBullet;
+}
+
+Object* CreateEnemy(const float _x, const float _y)
+{
+	Object* _Object = new Object;
+
+	Initialize(_Object, (char*)"홋", _x + 2.0f, _y);
+
+	return _Object;
 }
 
 //	커서위치 변경
@@ -94,14 +101,14 @@ void SetTextColor(int _Color)
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _Color);
 }
 
-void OnDrawText(const char* _str, const int _x, const int _y, const int _Color)
+void OnDrawText(const char* _str, const float _x, const float _y, const int _Color)
 {
 	SetCursorPosition(_x, _y);
 	SetTextColor(_Color);
 	cout << _str;
 }
 
-void OnDrawText(const int _Value, const int _x, const int _y, const int _Color)
+void OnDrawText(const int _Value, const float _x, const float _y, const int _Color)
 {
 	SetCursorPosition(_x, _y);
 	SetTextColor(_Color);
@@ -121,3 +128,4 @@ void HideCursor(bool _Visible)
 
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CursorInfo);
 }
+

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <Windows.h>
 #include <string>
+#include <math.h>
+//sqrt() 루트함수
 
 using namespace std;
 

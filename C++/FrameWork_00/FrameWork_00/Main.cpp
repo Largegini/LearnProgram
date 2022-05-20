@@ -12,7 +12,12 @@ int main(void)
 
 	Object* Player = new Object;
 
-	Object* Enemy = new Object;
+	Object* Temp = new Object;
+
+	Object* Enemy[32];
+
+	for (int i = 0; i < 32; ++i)
+		Enemy[i] = nullptr;
 
 	//	커서를 안보이게
 	HideCursor(false);
@@ -28,8 +33,8 @@ int main(void)
 		BackGround[i].Info.option = 0;
 
 		//	좌표를 랜덤으로 설정함
-		BackGround[i].Transform.Position.x = rand() % 100 + 10;
-		BackGround[i].Transform.Position.y = rand() % 30 + 1;
+		BackGround[i].Transform.Position.x = (float)(rand() % 100 + 10);
+		BackGround[i].Transform.Position.y = (float)(rand() % 30 + 1);
 
 		//	랜덤값을 초기화 해줌. 큰 값이 나올수 있도록 time값끼리 곱해줄 것이지만,
 		//	for문이 빠르게 돌게되면 time의 증가값보다 빠를수 있기때문에,
@@ -48,20 +53,20 @@ int main(void)
 
 	Initialize(Player, (char*)"옷", 30, 10);
 
-	Initialize(Enemy, (char*)"홋", 80, 10);
+	
 
 	//	현재시간으로 초기화
 	ULONGLONG Time = GetTickCount64();
-
+	ULONGLONG EnemyTime = GetTickCount64();
+	ULONGLONG EnemyBulletTime = GetTickCount64();
+	
 	Object* Bullet[128]{ nullptr };
 
-	int BulletCount = 0;
+	Object* EnemyBullet[128]{ nullptr };
 
 	int Delay = 100;
 
 	int iScore = 0;
-
-	bool Hit = false;
 
 	while (true)
 	{
@@ -85,41 +90,114 @@ int main(void)
 				BackGround[i].Info.Color = rand() % 8 + 1;
 			}
 
+			//	** Enemy생성
+			if (EnemyTime +1500 < GetTickCount64())
+			{
+				EnemyTime = GetTickCount64();
+
+				for (int i = 0; i < 32; ++i)
+				{
+					if (Enemy[i] == nullptr)
+					{
+						srand((GetTickCount() + i * i) * GetTickCount());
+
+						Enemy[i] = CreateEnemy(115, rand() % 30);
+						break;
+					}
+				}
+			}
+
+			// Enemy Bullet 생성
+			if (EnemyBulletTime + rand()%3000 < GetTickCount64())
+			{
+				EnemyBulletTime = GetTickCount64();
+
+				for (int i = 0; i < 32; ++i)
+				{
+					if (Enemy[i] != nullptr)
+					{
+						for (int j = 0; j < 128; ++j)
+						{
+							if (EnemyBullet[j] == nullptr)
+							{
+								EnemyBullet[j] =
+									CreateBullet(Enemy[i]->TransInfo.Position.x
+										, Enemy[i]->TransInfo.Position.y);
+								break;
+							}
+						}
+					}
+				}
+			}
+
 			//	for문 안에서는 지우는 기능은 넣지않는게 좋음
 			for (int i = 0; i < 128; ++i)
 			{
 				if (Bullet[i] != nullptr)
 				{
-					Hit = Collision(Bullet[i], Enemy);
-
-					if (Hit == true)
+					for (int j = 0; j < 32; ++j)
 					{
-						delete Bullet[i];
-						Bullet[i] = nullptr;
+						//Bullet이 Enemy와 충돌하면 지우기
+						if (Enemy[j] != nullptr)
+						{
+							if (Collision(Enemy[j], Bullet[i]))
+							{
+								delete Enemy[j];
+								Enemy[j] = nullptr;
 
-						BulletCount--;
+								delete Bullet[i];
+								Bullet[i] = nullptr;
+								break;
+							}
+						}
 					}
-					//	화면 밖으로 나간 총알 지우기
-					else if ((Bullet[i]->TransInfo.Position.x + Bullet[i]->TransInfo.Scale.x) >= 120)
+					if (Bullet[i] != nullptr)
 					{
-						// 지우고 난 뒤에 바로 접근 하면 프로그램 터짐
-						delete Bullet[i];
-						Bullet[i] = nullptr;
+						//	화면 밖으로 나간 총알 지우기
+						if ((Bullet[i]->TransInfo.Position.x + 
+							Bullet[i]->TransInfo.Scale.x) >= 120)
+						{
+							// 지우고 난 뒤에 바로 접근 하면 프로그램 터짐
+							delete Bullet[i];
+							Bullet[i] = nullptr;
+						}
+					}
+				}
+			}
 
-						BulletCount--;
+			for (int i = 0; i < 128; ++i)
+			{
+				if (EnemyBullet[i] != nullptr)
+				{
+					if (Collision(Player, EnemyBullet[i]))
+					{
+						delete EnemyBullet[i];
+						EnemyBullet[i] = nullptr;
+						break;
 					}
 
+					if (EnemyBullet[i] != nullptr)
+					{
+						if (EnemyBullet[i] != nullptr)
+						{
+							
+						}
+					}
 				}
 			}
 
 			if (GetAsyncKeyState(VK_UP))
 				Player->TransInfo.Position.y -= 1;
+
 			if (GetAsyncKeyState(VK_DOWN))
 				Player->TransInfo.Position.y += 1;
+
 			if (GetAsyncKeyState(VK_LEFT))
 				Player->TransInfo.Position.x-= 1;
+
 			if (GetAsyncKeyState(VK_RIGHT))
 				Player->TransInfo.Position.x += 1;
+
 			if (GetAsyncKeyState(VK_SPACE))
 			{
 				for (int i = 0; i < 128; ++i)
@@ -128,20 +206,43 @@ int main(void)
 					{
 						Bullet[i] = CreateBullet(Player->TransInfo.Position.x,
 							Player->TransInfo.Position.y);
-						++BulletCount;
 						break;
 					}
 				}
 			}
-			Collision(Player, Enemy);
 
-			OnDrawText(Enemy->Info.Texture, Enemy->TransInfo.Position.x, 
-				Enemy->TransInfo.Position.y, 12);
+			/*
+			if (Collision(Player, Enemy))
+			{
+				OnDrawText((char*)"충돌 입니다.",
+					60 - (int)(strlen("충돌 입니다.")) / 2, 0, 14);
+			}
+			*/
+
+			for (int i = 0; i < 32; ++i)
+			{
+				if (Enemy[i])
+				{
+					Enemy[i]->TransInfo.Position.x--;
+
+					OnDrawText(Enemy[i]->Info.Texture, 
+						Enemy[i]->TransInfo.Position.x,
+						Enemy[i]->TransInfo.Position.y, 12);
+
+					// Enemy 스크린 충돌
+					if (Enemy[i]->TransInfo.Position.x <= 0)
+					{
+						delete Enemy[i];
+						Enemy[i] = nullptr;
+					}
+				}
+			}
 
 			OnDrawText(Player->Info.Texture, Player->TransInfo.Position.x, 
 				Player->TransInfo.Position.y, 10);
 
 			//	Bullet 출력
+
 			for (int i = 0; i < 128; ++i)
 			{
 				if (Bullet[i])
@@ -150,9 +251,22 @@ int main(void)
 						Bullet[i]->TransInfo.Position.y);
 			}
 
-			OnDrawText((char*)"BulletCount : ", 100, 1);
-			OnDrawText(BulletCount, 100 + (int)(strlen("BulletCount : ")), 1);
-			
+			for (int i = 0; i < 128; ++i)
+			{
+				if (EnemyBullet[i])
+				{
+					OnDrawText(EnemyBullet[i]->Info.Texture,
+						EnemyBullet[i]->TransInfo.Position.x -= 2,
+						EnemyBullet[i]->TransInfo.Position.y);
+					//	화면 밖으로 나간 총알 지우기
+					if ((EnemyBullet[i]->TransInfo.Position.x) <= 0)
+					{
+						// 지우고 난 뒤에 바로 접근 하면 프로그램 터짐
+						delete EnemyBullet[i];
+						EnemyBullet[i] = nullptr;
+					}
+				}
+			}
 
 			OnDrawText((char*)"Score : ", (int)(60 - strlen("Score : ")), 1);
 			OnDrawText(++iScore, 60, 1);
