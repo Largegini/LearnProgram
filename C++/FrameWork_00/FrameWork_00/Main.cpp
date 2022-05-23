@@ -16,6 +16,8 @@ int main(void)
 
 	Object* Enemy[32];
 
+
+
 	for (int i = 0; i < 32; ++i)
 		Enemy[i] = nullptr;
 
@@ -91,7 +93,7 @@ int main(void)
 			}
 
 			//	** Enemy생성
-			if (EnemyTime +1500 < GetTickCount64())
+			if (EnemyTime +2000 < GetTickCount64())
 			{
 				EnemyTime = GetTickCount64();
 
@@ -108,26 +110,24 @@ int main(void)
 			}
 
 			// Enemy Bullet 생성
-			if (EnemyBulletTime + rand()%3000 < GetTickCount64())
+			if (EnemyBulletTime + rand()%1250 < GetTickCount64())
 			{
 				EnemyBulletTime = GetTickCount64();
 
-				for (int i = 0; i < 32; ++i)
-				{
-					if (Enemy[i] != nullptr)
+				int random = rand() % 32;
+					if (Enemy[random] != nullptr)
 					{
 						for (int j = 0; j < 128; ++j)
 						{
 							if (EnemyBullet[j] == nullptr)
 							{
 								EnemyBullet[j] =
-									CreateBullet(Enemy[i]->TransInfo.Position.x
-										, Enemy[i]->TransInfo.Position.y);
+									CreateEnemyBullet(Enemy[random]->TransInfo.Position.x
+										, Enemy[random]->TransInfo.Position.y);
 								break;
 							}
 						}
 					}
-				}
 			}
 
 			//	for문 안에서는 지우는 기능은 넣지않는게 좋음
@@ -176,13 +176,6 @@ int main(void)
 						break;
 					}
 
-					if (EnemyBullet[i] != nullptr)
-					{
-						if (EnemyBullet[i] != nullptr)
-						{
-							
-						}
-					}
 				}
 			}
 
@@ -251,15 +244,30 @@ int main(void)
 						Bullet[i]->TransInfo.Position.y);
 			}
 
+
+			
+
 			for (int i = 0; i < 128; ++i)
 			{
 				if (EnemyBullet[i])
 				{
+					// **** 적이 쏜 총알이 플레이어를 따라오게함
+					float x = Player->TransInfo.Position.x - EnemyBullet[i]->TransInfo.Position.x;
+					float y = Player->TransInfo.Position.y - EnemyBullet[i]->TransInfo.Position.y;
+
+
+					// ** sqrt : 제곱근 함수
+					float Length = sqrt((x * x) + (y * y));
+
+					Vector3 Direction = Vector3(x / Length, y / Length);
+					EnemyBullet[i]->TransInfo.Position.x += Direction.x;
+					EnemyBullet[i]->TransInfo.Position.y += Direction.y;
+
 					OnDrawText(EnemyBullet[i]->Info.Texture,
-						EnemyBullet[i]->TransInfo.Position.x -= 2,
-						EnemyBullet[i]->TransInfo.Position.y);
+						EnemyBullet[i]->TransInfo.Position.x ,
+						EnemyBullet[i]->TransInfo.Position.y,4);
 					//	화면 밖으로 나간 총알 지우기
-					if ((EnemyBullet[i]->TransInfo.Position.x) <= 0)
+					if (EnemyBullet[i]->TransInfo.Position.x <= 0)
 					{
 						// 지우고 난 뒤에 바로 접근 하면 프로그램 터짐
 						delete EnemyBullet[i];
@@ -268,7 +276,7 @@ int main(void)
 				}
 			}
 
-			OnDrawText((char*)"Score : ", (int)(60 - strlen("Score : ")), 1);
+			OnDrawText((char*)"Score : ", (float)(60 - strlen("Score : ")), 1);
 			OnDrawText(++iScore, 60, 1);
 
 		}

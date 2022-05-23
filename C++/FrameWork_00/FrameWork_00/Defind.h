@@ -1,11 +1,11 @@
 #pragma once
 
 //초기화 함수(매개변수초기화 뒤에서부터 된다)
-void Initialize(Object* _Object, char* _Name, int _PosX = 0, int _PosY = 0, int _PosZ = 0);
+void Initialize(Object* _Object, char* _Name, float _PosX = 0, float _PosY = 0, float _PosZ = 0);
 char* SetName(Object* _Object);
 
 // 커서위치 변경
-void SetCursorPosition(int _x, int _y);
+void SetCursorPosition(float _x, float _y);
 
 //	글자색 변경
 void SetTextColor(int _Color);
@@ -19,6 +19,7 @@ void OnDrawText(const int _Value, const float _x, const float _y, const int _Col
 bool Collision(Object* _ObjectA, Object* _ObjectB);
 // **** bullet을 생성함
 Object* CreateBullet(const float _x, const float _y);
+Object* CreateEnemyBullet(const float _x, const float _y);
 Object* CreateEnemy(const float _x, const float _y);
 
 //	커서 표시(true)/비표시(false)
@@ -60,9 +61,9 @@ void Initialize(Object* _Object, char* _Name, float _PosX, float _PosY, float _P
 bool Collision(Object* _ObjectA, Object* _ObjectB)
 {
 	bool Coll = false;
-	if ((_ObjectA->TransInfo.Position.x + _ObjectA->TransInfo.Scale.x) > _ObjectB->TransInfo.Position.x &&
-		(_ObjectB->TransInfo.Position.x + _ObjectB->TransInfo.Scale.x) > _ObjectA->TransInfo.Position.x &&
-		_ObjectA->TransInfo.Position.y == _ObjectB->TransInfo.Position.y
+	if ((_ObjectA->TransInfo.Position.x + 0.5f + _ObjectA->TransInfo.Scale.x) > _ObjectB->TransInfo.Position.x &&
+		(_ObjectB->TransInfo.Position.x + 0.5f + _ObjectB->TransInfo.Scale.x) > _ObjectA->TransInfo.Position.x &&
+		_ObjectA->TransInfo.Position.y + 0.5f == _ObjectB->TransInfo.Position.y
 		)
 		return true;
 
@@ -73,7 +74,16 @@ Object* CreateBullet(const float _x, const float _y)
 {
 	Object* pBullet = new Object;
 
-	Initialize(pBullet, (char*)"장풍!!", _x + 2.0f, _y);
+	Initialize(pBullet, (char*)"장풍!!", (float)_x + 2.0f, (float)_y);
+
+	return pBullet;
+}
+
+Object* CreateEnemyBullet(const float _x, const float _y)
+{
+	Object* pBullet = new Object;
+
+	Initialize(pBullet, (char*)"◆", (float)_x -2.0f, (float)_y);
 
 	return pBullet;
 }
@@ -82,13 +92,13 @@ Object* CreateEnemy(const float _x, const float _y)
 {
 	Object* _Object = new Object;
 
-	Initialize(_Object, (char*)"홋", _x + 2.0f, _y);
+	Initialize(_Object, (char*)"홋", (float)_x + 2.0f, (float)_y);
 
 	return _Object;
 }
 
 //	커서위치 변경
-void SetCursorPosition(int _x, int _y)
+void SetCursorPosition(float _x, float _y)
 {
 	COORD Pos = { (SHORT)_x, (SHORT)_y };
 
@@ -103,14 +113,14 @@ void SetTextColor(int _Color)
 
 void OnDrawText(const char* _str, const float _x, const float _y, const int _Color)
 {
-	SetCursorPosition(_x, _y);
+	SetCursorPosition((float)_x, (float)_y);
 	SetTextColor(_Color);
 	cout << _str;
 }
 
 void OnDrawText(const int _Value, const float _x, const float _y, const int _Color)
 {
-	SetCursorPosition(_x, _y);
+	SetCursorPosition((float)_x, (float)_y);
 	SetTextColor(_Color);
 
 	char* pText = new char[8];
