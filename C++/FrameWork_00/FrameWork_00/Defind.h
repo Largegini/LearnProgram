@@ -22,6 +22,12 @@ Object* CreateBullet(const float _x, const float _y);
 Object* CreateEnemyBullet(const float _x, const float _y);
 Object* CreateEnemy(const float _x, const float _y);
 
+//	* 거리 구하는 공식
+float GetDistance(Object* _ObjectA, Object* _ObjectB);
+//	* 방향을 구하는 공식
+Vector3 GetDirection(Object* _ObjectA, Object* _ObjectB);
+void UpdateKey(Object* _Object);
+
 //	커서 표시(true)/비표시(false)
 void HideCursor(bool _Visible);
 
@@ -60,10 +66,9 @@ void Initialize(Object* _Object, char* _Name, float _PosX, float _PosY, float _P
 //충돌
 bool Collision(Object* _ObjectA, Object* _ObjectB)
 {
-	bool Coll = false;
-	if ((_ObjectA->TransInfo.Position.x + 0.5f + _ObjectA->TransInfo.Scale.x) > _ObjectB->TransInfo.Position.x &&
-		(_ObjectB->TransInfo.Position.x + 0.5f + _ObjectB->TransInfo.Scale.x) > _ObjectA->TransInfo.Position.x &&
-		_ObjectA->TransInfo.Position.y + 0.5f == _ObjectB->TransInfo.Position.y
+	if ((_ObjectA->TransInfo.Position.x + _ObjectA->TransInfo.Scale.x) >= _ObjectB->TransInfo.Position.x &&
+		(_ObjectB->TransInfo.Position.x + _ObjectB->TransInfo.Scale.x) >= _ObjectA->TransInfo.Position.x &&
+		_ObjectA->TransInfo.Position.y == _ObjectB->TransInfo.Position.y
 		)
 		return true;
 
@@ -139,3 +144,38 @@ void HideCursor(bool _Visible)
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CursorInfo);
 }
 
+float GetDistance(Object* _ObjectA, Object* _ObjectB)
+{
+	//	** 거리를 구하는 식
+	float x = _ObjectA->TransInfo.Position.x - _ObjectB->TransInfo.Position.x;
+	float y = _ObjectA->TransInfo.Position.y - _ObjectB->TransInfo.Position.y;
+
+	// ** sqrt : 제곱근 함수
+	return sqrt((x * x) + (y * y));
+}
+
+void UpdateKey(Object* _Object)
+{
+	if (GetAsyncKeyState(VK_UP))
+		_Object->TransInfo.Position.y -= 1;
+
+	if (GetAsyncKeyState(VK_DOWN))
+		_Object->TransInfo.Position.y += 1;
+
+	if (GetAsyncKeyState(VK_LEFT))
+		_Object->TransInfo.Position.x -= 1;
+
+	if (GetAsyncKeyState(VK_RIGHT))
+		_Object->TransInfo.Position.x += 1;
+}
+
+Vector3 GetDirection(Object* _ObjectA, Object* _ObjectB)
+{
+	float Distance = GetDistance(_ObjectA, _ObjectB);
+
+	float x = _ObjectA->TransInfo.Position.x - _ObjectB->TransInfo.Position.x;
+	float y = _ObjectA->TransInfo.Position.y - _ObjectB->TransInfo.Position.y;
+
+	// ** 방향을 구하는 식
+	return Vector3(x / Distance, y / Distance);
+}

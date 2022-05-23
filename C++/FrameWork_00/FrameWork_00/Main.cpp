@@ -16,16 +16,17 @@ int main(void)
 
 	Object* Enemy[32];
 
-
+	Vector3 Direction[128];
+	int Speed =0 ;
 
 	for (int i = 0; i < 32; ++i)
 		Enemy[i] = nullptr;
 
-	//	커서를 안보이게
-	HideCursor(false);
-
 	//	배경초기화
 	DrawTextInfo BackGround[30];
+
+	//	커서를 안보이게
+	HideCursor(false);
 
 	for (int i = 0; i < 30; ++i)
 	{
@@ -69,6 +70,7 @@ int main(void)
 	int Delay = 100;
 
 	int iScore = 0;
+	bool Check = false;
 
 	while (true)
 	{
@@ -103,7 +105,7 @@ int main(void)
 					{
 						srand((GetTickCount() + i * i) * GetTickCount());
 
-						Enemy[i] = CreateEnemy(115, rand() % 30);
+						Enemy[i] = CreateEnemy(115, (float) (rand() % 30));
 						break;
 					}
 				}
@@ -124,6 +126,8 @@ int main(void)
 								EnemyBullet[j] =
 									CreateEnemyBullet(Enemy[random]->TransInfo.Position.x
 										, Enemy[random]->TransInfo.Position.y);
+								//	** EnemyBullet이 Player로 이동하기 위해 방향을 받아옴
+								Direction[j] = GetDirection(Player, EnemyBullet[j]);
 								break;
 							}
 						}
@@ -179,19 +183,31 @@ int main(void)
 				}
 			}
 
-			if (GetAsyncKeyState(VK_UP))
-				Player->TransInfo.Position.y -= 1;
+			UpdateKey(Player);
+			/******************************************************************
+			0x0000 이전에 눌린 적이 없으며 현재 호출시점에 눌리지 않은 상태
+			0x8000 이전에 눌린 적이 없으며 현재 호출시점에 눌린 상태
+			0x0001 이전에 눌린 적이 있으며 현재 호출시점에 눌리지 않은 상태
+			0x8001 이전에 눌린 적이 있으며 현재 호출시점에 눌린 상태
+			******************************************************************/
+			if (!Check && GetAsyncKeyState(VK_SPACE) & 0x0001)
+			{
+				Speed = 0;
+				Check = true;
+				
+				
+				
+				
+			}
+			if (GetAsyncKeyState(VK_SPACE) & 0x8001)
+			{
+				if (Speed < 10)
+					++Speed;
 
-			if (GetAsyncKeyState(VK_DOWN))
-				Player->TransInfo.Position.y += 1;
-
-			if (GetAsyncKeyState(VK_LEFT))
-				Player->TransInfo.Position.x-= 1;
-
-			if (GetAsyncKeyState(VK_RIGHT))
-				Player->TransInfo.Position.x += 1;
-
-			if (GetAsyncKeyState(VK_SPACE))
+				for(int i =0; i< Speed; ++i)
+					OnDrawText((char*)"/", 25.0f+(float)i, 1.0f);
+			}
+			if (Check && !(GetAsyncKeyState(VK_SPACE) & 0x8000))
 			{
 				for (int i = 0; i < 128; ++i)
 				{
@@ -199,10 +215,19 @@ int main(void)
 					{
 						Bullet[i] = CreateBullet(Player->TransInfo.Position.x,
 							Player->TransInfo.Position.y);
+						if (Bullet[i])
+						{
+							Bullet[i]->Speed = Speed;
+							break;
+						}
 						break;
 					}
 				}
+				Speed = 0;
+				Check = false;
 			}
+
+		
 
 			/*
 			if (Collision(Player, Enemy))
@@ -240,10 +265,9 @@ int main(void)
 			{
 				if (Bullet[i])
 					OnDrawText(Bullet[i]->Info.Texture,
-						Bullet[i]->TransInfo.Position.x+=2,
+						Bullet[i]->TransInfo.Position.x+= Bullet[i]->Speed+1,
 						Bullet[i]->TransInfo.Position.y);
 			}
-
 
 			
 
@@ -251,23 +275,19 @@ int main(void)
 			{
 				if (EnemyBullet[i])
 				{
-					// **** 적이 쏜 총알이 플레이어를 따라오게함
-					float x = Player->TransInfo.Position.x - EnemyBullet[i]->TransInfo.Position.x;
-					float y = Player->TransInfo.Position.y - EnemyBullet[i]->TransInfo.Position.y;
-
-
-					// ** sqrt : 제곱근 함수
-					float Length = sqrt((x * x) + (y * y));
-
-					Vector3 Direction = Vector3(x / Length, y / Length);
-					EnemyBullet[i]->TransInfo.Position.x += Direction.x;
-					EnemyBullet[i]->TransInfo.Position.y += Direction.y;
+					//	** 해당 방향으로 이동함
+					EnemyBullet[i]->TransInfo.Position.x += Direction[i].x;
+					EnemyBullet[i]->TransInfo.Position.y += Direction[i].y;
 
 					OnDrawText(EnemyBullet[i]->Info.Texture,
 						EnemyBullet[i]->TransInfo.Position.x ,
-						EnemyBullet[i]->TransInfo.Position.y,4);
+						EnemyBullet[i]->TransInfo.Position.y,5);
+
 					//	화면 밖으로 나간 총알 지우기
-					if (EnemyBullet[i]->TransInfo.Position.x <= 0)
+					if (EnemyBullet[i]->TransInfo.Position.x <= 2 ||
+						EnemyBullet[i]->TransInfo.Position.x >= 118 ||
+						EnemyBullet[i]->TransInfo.Position.y <= 2 ||
+						EnemyBullet[i]->TransInfo.Position.y >= 28)
 					{
 						// 지우고 난 뒤에 바로 접근 하면 프로그램 터짐
 						delete EnemyBullet[i];
@@ -276,9 +296,15 @@ int main(void)
 				}
 			}
 
-			OnDrawText((char*)"Score : ", (float)(60 - strlen("Score : ")), 1);
-			OnDrawText(++iScore, 60, 1);
+			OnDrawText((char*)"Score : ", (float)(60.0f - strlen("Score : ")), 1.0f);
+			OnDrawText(++iScore, 60.0f, 1);
+			
+			
 
+			OnDrawText((char*)"[",
+				25.0f, 1.0f);
+			OnDrawText((char*)"]",
+				35.0f, 1.0f);
 		}
 	}
 
