@@ -74,11 +74,6 @@ public:
 	}
 };
 
-/*class Object
-{
-
-};
-*/
 
 int main(void)
 {
