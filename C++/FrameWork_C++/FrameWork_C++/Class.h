@@ -1,5 +1,6 @@
 #pragma once
-#include <iostream>
+#include <iostream>		//c++스타일 표준입출력 라이브러리
+#include <Windows.h>
 
 using namespace std;
 
@@ -86,10 +87,69 @@ namespace CCC // AAA라는 영역이 만들어짐
 //	데이터를 공개를 하면 네임스페이스로 접근하여 객체를 생성하지 않고도 접근할 수 있다.
 //
 
-//	** 연산자 오버로딩
+//	** 오버로딩 & 오버라이딩
 
+// 기능이 없어야 추상 클래스이다
+class Parents
+{
+protected:
+	string Name;
 
-class Object
+public:
+	//	순수 가상함수
+	//	함수안에 아무것도 없다
+	//	가상함수만 가능하다
+	//	virtual void Output() =0;
+	//	PURE -> #define = 0					   오버로딩
+	virtual void Output()PURE;				// <-┐	
+	virtual void Output(string _str)PURE;	// <-┘  <-──────┐
+											//					   │
+	Parents() {}							//					   │
+	Parents(string _str) : Name(_str) {}	//					   │
+											//					   │
+};											//					   │
+											//				   오버라이딩
+class Child : public Parents				//					   │
+{											//					   │
+public:										//					   │
+	//	오버로딩												   │
+	//	매개변수의 타입과 갯수에 따라 다르게 호출할 수 있는 기능   │
+	//	같은 영역내에서 결정됨									   │
+	//	상속여부와는 관계없다				   오버로딩     	   │
+	virtual void Output() override			// <-┐		           │
+	{										//	 │				   │
+		cout << "Child : " << Name << endl;	//   │  <-──────┘
+	}										//   │
+	virtual void Output(string _str)override// <-┘
+	{
+		cout << "Name : " << _str << endl;
+	}
+
+	Child() {}
+	Child(string _str) : Parents(_str) {}
+};
+
+class Object : public Parents
+{
+public:
+	//	오버라이딩
+	//	클래스의 형태에 따라 실행이되는 것
+	//	상속관계에 영역내에서 결정
+	//	상속관계일 경우에만 사용
+	virtual void Output()override
+	{
+		cout << "Object : " << Name << endl;
+	}
+	virtual void Output(string _str)override
+	{
+		cout << "Object : " << Name << endl;
+	}
+
+	Object() {}
+	Object(string _str) : Parents(_str) {}
+};
+
+class Object2
 {
 //	** 비공개 형태로 만들어 줌	/	나만사용	/ 데이터
 private:
@@ -108,7 +168,7 @@ public:
 public:
 	//	안정성을 위해 나누었다
 	void Setter(int _Number);
-	int GetiNumber2();
+	int GetiNumber();
 
 
 	// 클래스이름을 함수이름에 그대로 넣으면 생성자
@@ -116,7 +176,7 @@ public:
 	//	우리눈에는 안보이지만 기본 생성자&소멸자가 존재한다
 
 	//	** 생성자
-	Object()
+	Object2()
 	{
 
 		cout << "생성자" << endl;
@@ -124,19 +184,19 @@ public:
 
 	//	** 복사생성자 = 사용자가 직접호출했을 경우에만 호출이 된다.
 	//	** 매개변수의 갯수나 형태에 따라서 선택적(자동)으로 호출됨
-	Object(string _str)
+	Object2(string _str)
 	{
 
 		cout << _str << endl;
 	}
 
-	Object(string _str, int _i)
+	Object2(string _str, int _i)
 	{
 
 		cout << _str << " : " << _i << endl;
 	}
 
-	Object(string _str, float _f)
+	Object2(string _str, float _f)
 	{
 
 		cout << _str << " : " << _f << endl;
@@ -144,19 +204,19 @@ public:
 
 	// 소멸자
 	// 클래스이름을 함수이름에 그대로 넣고 앞에 물결표가 들어가면 소멸자
-	~Object()
+	~Object2()
 	{
 		cout << "소멸자" << endl;
 	}
 
 };
 
-void Object::Setter(int _Number)
+void Object2::Setter(int _Number)
 {
 	iNumber2 = _Number;
 }
 
-int Object::GetiNumber2()
+int Object2::GetiNumber()
 {
 	return iNumber2;
 }
@@ -164,13 +224,19 @@ int Object::GetiNumber2()
 
 int main(void)
 {
+	Parents* p[2];
 
+	p[0] = new Child("홍길동");
+	p[1] = new Object("임꺽정");
+
+	p[0]->Output();
+	p[1]->Output();
 
 	
-	Object o = Object("복사생성자", 10.2f);	//생성자 호출
+	Object2 o = Object2("복사생성자", 10.2f);	//생성자 호출
 
 	cout << "=========================" << endl;
-	//Object o1, o2;
+	Object2 o1, o2;
 
 	//	변경
 	//	기능은 퍼블릭이기에 가능
@@ -180,8 +246,8 @@ int main(void)
 
 	//	참조
 	//	참조할 때는 참조만
-	cout << o1.Getter() << endl;
-	cout << o2.Getter() << endl;
+	cout << o1.GetiNumber() << endl;
+	cout << o2.GetiNumber() << endl;
 
 	AAA::Number = 1;
 	BBB::Number = 10;
@@ -200,7 +266,7 @@ int main(void)
 	CCC::Output();
 
 
-	** 퍼블릭일 경우에만 사용이 가능하다
+	// ** 퍼블릭일 경우에만 사용이 가능하다
 	o1.iNumber = 10;
 	o2.iNumber = 20;
 	//	출력

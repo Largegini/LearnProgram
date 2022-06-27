@@ -29,5 +29,8 @@
     <ClInclude Include="Class.h">
       <Filter>헤더 파일\Practice</Filter>
     </ClInclude>
+    <ClInclude Include="Operator.h">
+      <Filter>헤더 파일\Practice</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
