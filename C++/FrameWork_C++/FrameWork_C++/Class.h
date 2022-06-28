@@ -222,7 +222,7 @@ int Object2::GetiNumber()
 }
 
 
-int main(void)
+int mainc(void)
 {
 	Parents* p[2];
 

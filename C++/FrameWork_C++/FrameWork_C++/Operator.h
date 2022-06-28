@@ -86,9 +86,13 @@ public:
 };
 
 
-int main()
+int maina()
 {
 	//	int i1(1) 은 i1 = 1 과 같다
+	// 
+		//	DWORD unsigned  long
+	//					1/1000		max 시간 = 49일
+	DWORD dwTime = GetTickCount();
 
 	Object  o1(10), o2(2);
 	o1 / o2;

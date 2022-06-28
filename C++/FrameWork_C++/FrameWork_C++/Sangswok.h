@@ -30,7 +30,7 @@ public:
 	Child(string _str) : Parents(_str) {}
 };
 
-int main()
+int mainb()
 {
 	Child c = Child("Child");
 	c.Output();

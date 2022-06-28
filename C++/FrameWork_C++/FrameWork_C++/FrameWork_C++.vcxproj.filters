@@ -13,24 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="헤더 파일\Practice">
-      <UniqueIdentifier>{049a1239-5b79-49cd-8d2d-767e2aad57dc}</UniqueIdentifier>
+    <Filter Include="소스 파일\01.Object">
+      <UniqueIdentifier>{7585c60b-4a75-4ded-8889-65bfaa9d747c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02.Manager">
+      <UniqueIdentifier>{e25b5aa9-2516-4037-88e8-a74a002aa4f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.MainUpdate">
+      <UniqueIdentifier>{a8e39023-bc68-4b25-aec4-0b7d03118ef6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MainUpdate.cpp">
+      <Filter>소스 파일\00.MainUpdate</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일\01.Object</Filter>
+    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Scenemanager.cpp">
+      <Filter>소스 파일\02.Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sangswok.h">
-      <Filter>헤더 파일\Practice</Filter>
+    <ClInclude Include="Headers.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Class.h">
-      <Filter>헤더 파일\Practice</Filter>
+    <ClInclude Include="MainUpdate.h">
+      <Filter>소스 파일\00.MainUpdate</Filter>
     </ClInclude>
-    <ClInclude Include="Operator.h">
-      <Filter>헤더 파일\Practice</Filter>
+    <ClInclude Include="Object.h">
+      <Filter>소스 파일\01.Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenemanager.h">
+      <Filter>소스 파일\02.Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
