@@ -1,28 +1,11 @@
 #include "MainUpdate.h"
 
-//	** 싱글톤
-//	디자인 패턴
-//	혼자만 쓰임
-
 //	변수 = 컨테이너 = L밸류
 //	상수 = R밸류
 
-class Singleton
-{
-private :
-	static Singleton* Instance;
-public:
-	static Singleton* GetInstance()
-	{
-		if (Instance == nullptr)
-			Instance = new Singleton;
-		return Instance;
-	}
-
-	
-};
 //	전역초기화
-Singleton* Singleton::Instance = nullptr;
+//	런타임 전에 초기화
+
 
 int main(void)
 {

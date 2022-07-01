@@ -1,5 +1,5 @@
 #include "MainUpdate.h"
-#include "Object.h"
+#include "Scenemanager.h"
 
 
 MainUpdate :: MainUpdate()
@@ -13,22 +13,19 @@ MainUpdate::~MainUpdate()
 }
 void MainUpdate::Start()
 {
-	pPlayer = new Object;
-	pPlayer->Start();
+	Scenemanager::GetInstance()->SetScene(SceneID::LOGO);
 }
 
 void MainUpdate::Update()
 {
-	pPlayer->Update();
+
 }
 
 void MainUpdate::Render()
 {
-	pPlayer->Render();
+
 }
 
 void MainUpdate::Release()
 {
-	delete pPlayer;
-	pPlayer = nullptr;
 }

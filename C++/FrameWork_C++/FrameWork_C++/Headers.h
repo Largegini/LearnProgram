@@ -3,3 +3,5 @@
 #include <Windows.h>
 
 using namespace std;
+
+#include "Enum.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include "Headers.h"
 
-class Object
+class Scene
 {
 public:
 	virtual void Start()PURE;		// 초기화
@@ -9,7 +9,7 @@ public:
 	virtual void Render()PURE;		// 그리기
 	virtual void Release()PURE;		// 메모리 해제
 public:
-	Object();
-	~Object();
+	Scene();
+	virtual ~Scene();
 };
 
