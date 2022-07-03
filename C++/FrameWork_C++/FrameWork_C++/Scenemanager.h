@@ -15,10 +15,14 @@ public:
 private:
 	Scene* SceneState;
 public:
-	void SetScene(SceneID _State) {}
+	void SetScene(SceneID _SceneID);
+	void Update();
+	void Render();
+	void Release();
+
 private:
-	Scenemanager() {}
+	Scenemanager();
 public:
-	~Scenemanager() {}
+	~Scenemanager();
 };
 

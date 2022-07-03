@@ -2,7 +2,7 @@
 #include "Scenemanager.h"
 
 
-MainUpdate :: MainUpdate()
+MainUpdate :: MainUpdate() : Count(0)
 {
 
 }
@@ -18,12 +18,12 @@ void MainUpdate::Start()
 
 void MainUpdate::Update()
 {
-
+	Scenemanager::GetInstance()->Update();
 }
 
 void MainUpdate::Render()
 {
-
+	Scenemanager::GetInstance()->Render();
 }
 
 void MainUpdate::Release()
