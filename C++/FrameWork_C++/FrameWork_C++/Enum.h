@@ -4,5 +4,5 @@
 //	상수&정수
 //	namespace 접근
 
-enum SceneID { LOGO, MENU,STAGE,EXIT};
+enum class SceneID { LOGO, MENU,STAGE,EXIT};
 

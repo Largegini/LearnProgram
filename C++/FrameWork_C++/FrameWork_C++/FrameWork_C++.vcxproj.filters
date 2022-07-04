@@ -43,6 +43,9 @@
     <Filter Include="소스 파일\02.Scene\Stage">
       <UniqueIdentifier>{d141a9df-5d44-49c1-975f-4fba1dc33816}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\99.Manager\InputManager">
+      <UniqueIdentifier>{f1561a2e-54b6-49fe-9377-e5c3a8b6df5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainUpdate.cpp">
@@ -74,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="Stage.cpp">
       <Filter>소스 파일\02.Scene\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>소스 파일\99.Manager\InputManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +114,15 @@
       <Filter>소스 파일\02.Scene\Stage</Filter>
     </ClInclude>
     <ClInclude Include="Enum.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>소스 파일\99.Manager\InputManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Constant.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

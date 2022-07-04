@@ -1,5 +1,6 @@
 #include "Stage.h"
 #include "Scenemanager.h"
+#include "Player.h"
 
 Stage::Stage()
 {
@@ -8,27 +9,27 @@ Stage::Stage()
 
 Stage :: ~Stage()
 {
-
+	Release();
 }
 void Stage::Start()
 {
-	Count = 0;
+	pPlayer = new Player;
+	pPlayer->Start();
 }
 
 void Stage::Update()
 {
-	Count++;
-
-	if(Count>= 50)
-		Scenemanager::GetInstance()->SetScene(SceneID::EXIT);
+	pPlayer->Update();
 }
 
 void Stage::Render()
 {
+	pPlayer->Render();
 	cout << "Render :" << Count << endl;
 }
 
 void Stage::Release()
 {
-
+	delete pPlayer;
+	pPlayer = nullptr;
 }
