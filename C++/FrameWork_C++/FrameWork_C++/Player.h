@@ -11,6 +11,7 @@ public:
 public:
 	Player();
 	virtual ~Player();
+
 private:
 	Vector3 V1;
 	Vector3 V2;
