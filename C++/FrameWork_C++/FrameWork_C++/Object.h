@@ -24,7 +24,8 @@ public:
 	void SetDirection(Vector3 _Direction) 
 	{ Info.Direction= _Direction; }
 
-	void SetDirection(float _x, float _y) 
+	void SetDirection(float _x, float _y
+	) 
 	{ Info.Direction = Vector3(_x,_y); }
 
 	void SetTarget(Object* _Target) { Target = _Target; }
