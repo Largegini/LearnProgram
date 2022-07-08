@@ -15,6 +15,19 @@ struct Vector3
 	{
 		return Vector3(x + _V1.x, y + _V1.y, z + _V1.z);
 	}
+	Vector3 operator*(float _Value)
+	{
+		return Vector3(x * _Value, y * _Value, z * _Value);
+	}
+	Vector3 operator/(float _Value)
+	{
+		return Vector3(x / _Value, y / _Value, z / _Value);
+	}
+	Vector3 operator+=(Vector3 _V1)
+	{
+		return Vector3(x += _V1.x, y += _V1.y, z +=_V1.z);
+	}
+
 
 };
 
@@ -23,4 +36,5 @@ struct Transform
 	Vector3 Position;
 	Vector3 Rotation;
 	Vector3 Scale;
+	Vector3 Direction;
 };

@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object()
+Object::Object() : Target(nullptr)
 {
 
 }
@@ -15,9 +15,9 @@ void Object::Start()
 
 }
 
-void Object::Update()
+int Object::Update()
 {
-
+	return 0;
 }
 
 void Object::Render()

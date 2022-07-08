@@ -46,6 +46,15 @@
     <Filter Include="소스 파일\99.Manager\InputManager">
       <UniqueIdentifier>{f1561a2e-54b6-49fe-9377-e5c3a8b6df5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\99.Manager\ObjectManager">
+      <UniqueIdentifier>{1ddca7c2-9c30-4bf8-bd6e-d4b354a58b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\01.Object\Bullet">
+      <UniqueIdentifier>{67ed3fe1-d6bc-4695-b530-9c9e92091b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\99.Manager\CursorManager">
+      <UniqueIdentifier>{026c03c7-f0aa-402b-b32b-6e44393082d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainUpdate.cpp">
@@ -80,6 +89,15 @@
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>소스 파일\99.Manager\InputManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>소스 파일\99.Manager\ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>소스 파일\01.Object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorManager.cpp">
+      <Filter>소스 파일\99.Manager\CursorManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +142,15 @@
     </ClInclude>
     <ClInclude Include="Struct.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>소스 파일\99.Manager\ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>소스 파일\01.Object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="CursorManager.h">
+      <Filter>소스 파일\99.Manager\CursorManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

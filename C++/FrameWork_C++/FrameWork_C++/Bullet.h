@@ -1,18 +1,19 @@
 #pragma once
 #include "Object.h"
 
-class Enemy : public Object
+class Bullet : public Object
 {
 private:
-	ULONGLONG Time;
-	int Count;
+	int Index;
 public:
 	virtual void Start() override;
 	virtual int Update()override;
 	virtual void Render()override;
 	virtual void Release()override;
 public:
-	Enemy();
-	virtual ~Enemy();
+	void SetIndex(int _Index) { Index = _Index; }
+public:
+	Bullet();
+	virtual ~Bullet();
 };
 
