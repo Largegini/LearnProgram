@@ -1,6 +1,6 @@
 #include "Stage.h"
 #include "Scenemanager.h"
-#include "Player.h"
+#include "ObjectManager.h"
 
 Stage::Stage()
 {
@@ -13,19 +13,18 @@ Stage :: ~Stage()
 }
 void Stage::Start()
 {
-	pPlayer = new Player;
-	pPlayer->Start();
+
+	ObjectManager::GetInstance()->Start();
 }
 
 void Stage::Update()
 {
-	pPlayer->Update();
+	ObjectManager::GetInstance()->Update();
 }
 
 void Stage::Render()
 {
-	pPlayer->Render();
-	cout << "Render :" << Count << endl;
+	ObjectManager::GetInstance()->Render();
 }
 
 void Stage::Release()

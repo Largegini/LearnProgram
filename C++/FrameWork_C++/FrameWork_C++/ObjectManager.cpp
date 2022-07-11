@@ -2,6 +2,8 @@
 #include "Bullet.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "CollisionManager.h"
+#include "CursorManager.h"
 
 ObjectManager* ObjectManager::Instance = nullptr;
 
@@ -9,7 +11,7 @@ void ObjectManager::CreateObject(int _StateIndex)
 {
 	for (int i = 0; i < 128; ++i)
 	{
-		if (pBullet[i] = nullptr)
+		if (pBullet[i] == nullptr)
 		{
 			pBullet[i] = new Bullet;
 			pBullet[i]->Start();
@@ -45,14 +47,41 @@ void ObjectManager::Start()
 
 void ObjectManager::Update()
 {
-	pPlayer->Update();
-	pEnemy->Update();
-
 	int result = 0;
+	pPlayer->Update();
+
+	if (pEnemy != nullptr)
+		pEnemy->Update();
+
+	if (pEnemy)
+	{
+		if (CollisionManager::RectCollision(pPlayer->GetTransform(),
+			pEnemy->GetTransform()))
+		{
+			CursorManager::GetInstance()->SetcursorPosition(0.0f, 0.0f, (char*)"충돌입니다");
+			result = 2;
+		}
+
+		if (result == 2)
+		{
+			delete pEnemy;
+			pEnemy = nullptr;
+		}
+	}
+
 	for (int i = 0; i < 128; ++i)
 	{
 		if (pBullet[i])
+		{
 			result = pBullet[i]->Update();
+
+			if (CollisionManager::RectCollision(pPlayer->GetTransform(),
+				pBullet[i]->GetTransform()))
+			{
+				CursorManager::GetInstance()->SetcursorPosition(0.0f, 0.0f, (char*)"충돌입니다");
+				result = 1;
+			}
+		}
 
 		if (result == 1)
 		{
@@ -60,12 +89,14 @@ void ObjectManager::Update()
 			pBullet[i] = nullptr;
 		}
 	}
+	
 }
 
 void ObjectManager::Render()
 {
 	pPlayer->Render();
-	pEnemy->Render();
+	if (pEnemy != nullptr)
+		pEnemy->Render();
 
 	for (int i = 0; i < 128; ++i)
 	{
@@ -93,6 +124,10 @@ void ObjectManager::Release()
 
 ObjectManager::ObjectManager():pPlayer(nullptr),pEnemy(nullptr)
 {
+	for (int i = 0; i < 128; ++i)
+	{
+		pBullet[i] = nullptr;
+	}
 }
 
 ObjectManager::~ObjectManager()

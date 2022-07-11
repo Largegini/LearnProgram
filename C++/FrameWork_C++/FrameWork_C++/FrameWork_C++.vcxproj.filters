@@ -55,6 +55,9 @@
     <Filter Include="소스 파일\99.Manager\CursorManager">
       <UniqueIdentifier>{026c03c7-f0aa-402b-b32b-6e44393082d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\99.Manager\CollisionManager">
+      <UniqueIdentifier>{5b5ae8ed-172b-476f-9e53-368adbfd322e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainUpdate.cpp">
@@ -151,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="CursorManager.h">
       <Filter>소스 파일\99.Manager\CursorManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>소스 파일\99.Manager\CollisionManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

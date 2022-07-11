@@ -16,7 +16,7 @@ void Player::Start()
 {
 	Info.Position = Vector3(74.0f, 20.0f);
 	Info.Rotation = Vector3(0.0f, 0.0f);
-	Info.Scale = Vector3(0.0f, 0.0f);
+	Info.Scale = Vector3(2.0f, 1.0f);
 	V1 = Vector3(10.0f, 10.0f);
 	V2 = Vector3(0.0f, 0.0f);
 	V3 = Vector3(0.0f, 0.0f);
@@ -44,13 +44,15 @@ int Player::Update()
 		Info.Position.y++;
 
 	if (dwkey & KEY_LEFT)
-		Info.Position.x--;
+		Info.Position.x-=2;
 
 	if (dwkey & KEY_RIGHT)
-		Info.Position.x++;
+		Info.Position.x+=2;
 
 	if (dwkey & KEY_SPACE)
-		Info.Position.x++;
+	{
+		
+	}
 
 	//if (dwkey & KEY_ESCAPE)
 	//	Info.Position = Vector3(0.0f, 0.0f);
@@ -59,14 +61,6 @@ int Player::Update()
 
 void Player::Render()
 {
-	cout << "X :" << Info.Position.x << endl;
-	cout << "Y :" << Info.Position.y << endl;
-	cout << "VX :" << V2.x << endl;
-	cout << "VY :" << V2.y << endl;
-
-	cout << "+X :" << V3.x << endl;
-	cout << "+Y :" << V3.y << endl;
-
 	CursorManager::GetInstance()->SetcursorPosition(Info.Position, (char*)"¡â");
 }
 

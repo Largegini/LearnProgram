@@ -13,6 +13,7 @@ public:
 	virtual void Render()PURE;		// 그리기
 	virtual void Release()PURE;		// 메모리 해제
 public:
+	Transform GetTransform() const { return Info; }
 	Vector3 GetPosition() const { return Info.Position; }
 
 	void SetPosition(Vector3 Position)

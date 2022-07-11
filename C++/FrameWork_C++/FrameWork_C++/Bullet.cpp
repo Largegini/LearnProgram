@@ -5,7 +5,7 @@ void Bullet::Start()
 {
 	Info.Position = Vector3(0.0f, 0.0f);
 	Info.Rotation = Vector3(0.0f, 0.0f);
-	Info.Scale = Vector3(0.0f, 0.0f);
+	Info.Scale = Vector3(1.0f, 1.0f);
 	Info.Direction = Vector3(0.0f, 0.0f);
 
 	Target = 0;
@@ -16,12 +16,12 @@ int Bullet::Update()
 	switch (Index)
 	{
 	case 0:
-		Info.Position += Info.Direction * 0.05f;
+		Info.Position += Info.Direction * 0.1f;
 		break;
 	case 1:
 	{	
 		Info.Direction = Target->GetPosition() - Info.Position;
-		Info.Position += Info.Direction * 0.05f;
+		Info.Position += Info.Direction * 0.1f;
 	}
 		break;
 	}
@@ -30,6 +30,7 @@ int Bullet::Update()
 	{
 		return 1;
 	}
+
 	return 0;
 }
 
