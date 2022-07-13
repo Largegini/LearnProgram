@@ -1,6 +1,7 @@
 #include "Stage.h"
 #include "Scenemanager.h"
 #include "ObjectManager.h"
+#include "CursorManager.h"
 
 Stage::Stage()
 {
@@ -13,7 +14,6 @@ Stage :: ~Stage()
 }
 void Stage::Start()
 {
-
 	ObjectManager::GetInstance()->Start();
 }
 
@@ -24,6 +24,13 @@ void Stage::Update()
 
 void Stage::Render()
 {
+	for (float y = 0; y < 40; ++y)
+	{
+		for (float x = 0; x < 150; ++x)
+		{
+			CursorManager::GetInstance()->WriteBuffer(x, y, (char*)"A");
+		}
+	}
 	ObjectManager::GetInstance()->Render();
 }
 

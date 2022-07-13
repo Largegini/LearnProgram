@@ -9,6 +9,8 @@
 
 int main(void)
 {
+	system("title æ»¡§ø¨ : Untiled");
+	system("mode con cols=150 lines=40");
 	MainUpdate Main;
 	Main.Start();
 

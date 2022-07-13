@@ -5,6 +5,7 @@ class Stage : public Scene
 {
 private:
 	Object* pPlayer;
+	char* Array[40][150];
 public:
 	virtual void Start()override;		// 초기화
 	virtual void Update()override;		// 변경사항 및 충돌 등의 이벤트 체크

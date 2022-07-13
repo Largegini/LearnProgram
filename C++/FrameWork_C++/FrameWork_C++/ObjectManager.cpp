@@ -58,7 +58,7 @@ void ObjectManager::Update()
 		if (CollisionManager::RectCollision(pPlayer->GetTransform(),
 			pEnemy->GetTransform()))
 		{
-			CursorManager::GetInstance()->SetcursorPosition(0.0f, 0.0f, (char*)"충돌입니다");
+			CursorManager::GetInstance()->WriteBuffer(0.0f, 0.0f, (char*)"충돌입니다");
 			result = 2;
 		}
 
@@ -78,7 +78,7 @@ void ObjectManager::Update()
 			if (CollisionManager::RectCollision(pPlayer->GetTransform(),
 				pBullet[i]->GetTransform()))
 			{
-				CursorManager::GetInstance()->SetcursorPosition(0.0f, 0.0f, (char*)"충돌입니다");
+				CursorManager::GetInstance()->WriteBuffer(0.0f, 0.0f, (char*)"충돌입니다");
 				result = 1;
 			}
 		}
