@@ -58,6 +58,12 @@
     <Filter Include="소스 파일\99.Manager\CollisionManager">
       <UniqueIdentifier>{5b5ae8ed-172b-476f-9e53-368adbfd322e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\99.Manager\MathManger">
+      <UniqueIdentifier>{ec128134-0758-47fb-ac2a-e90f4dd42cf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\99.Manager\ObjectFactory">
+      <UniqueIdentifier>{30b0b436-e61b-463d-a4e3-e33f1de4a85e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainUpdate.cpp">
@@ -157,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="CollisionManager.h">
       <Filter>소스 파일\99.Manager\CollisionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MathManager.h">
+      <Filter>소스 파일\99.Manager\MathManger</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactory.h">
+      <Filter>소스 파일\99.Manager\ObjectFactory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
